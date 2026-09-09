@@ -41,7 +41,7 @@ export function runBookmarkletOnFrame(
 
     const script = doc.createElement("script");
     script.setAttribute("data-pz-bookmarklet", "1");
-    script.textContent = `(function(){try{\n${code}\n}catch(err){console.error("[PeteZah bookmarklet]",err);}})();`;
+    script.textContent = `(function(){try{\n${code}\n}catch(err){console.error("[AndiHub bookmarklet]",err);}})();`;
     (doc.head || doc.documentElement).appendChild(script);
     try {
       script.remove();

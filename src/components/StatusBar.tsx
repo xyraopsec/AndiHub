@@ -13,7 +13,7 @@ const LEGAL_LINKS = [
   { key: "dmca", label: "DMCA", href: "/dmca" },
 ] as const;
 
-const DISCORD_INVITE = "https://discord.gg/cYjHFDguxS";
+const DISCORD_INVITE = "https://discord.gg/andihub";
 
 function DiscordIcon({ size = 10 }: { size?: number }) {
   return (

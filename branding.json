@@ -1,0 +1,26 @@
+{
+  "_comment": "Single source of truth for the AndiHub rebrand. Edit values here, then run: node scripts/apply-branding.mjs",
+  "brand": "AndiHub",
+  "brandShort": "Andi",
+  "tagline": "Unblocked Games, Proxy Browser, Movies & Music",
+  "domain": "andihub.gg",
+  "siteUrl": "https://andihub.gg/",
+  "contactEmail": "contact@andihub.gg",
+  "dmcaEmail": "andihub@gmail.com",
+  "mailFrom": "AndiHub <no-reply@verify.andihub.gg>",
+  "discordInvite": "https://discord.gg/andihub",
+  "discordLegal": "https://discord.andihub.gg",
+  "packageName": "andihub",
+  "author": "Andi",
+  "twitter": "@andihub",
+  "aiName": "AndiAI",
+  "aiDeveloper": "Andi",
+  "sourceUrl": "https://github.com/xyraopsec/AndiHub",
+  "upstreamRepo": "PeteZah-Games/PeteZahGames",
+  "upstreamUrl": "https://github.com/PeteZah-Games/PeteZahGames",
+  "_todo": [
+    "Replace domain/discord/mail values above with real ones when deploying (currently placeholders).",
+    "YOUTUBE_URL in src/components/DiscordPopup.tsx still points at the upstream creator's channel — swap in your own.",
+    "branding/logo.png is a minimal placeholder mark — replace with a real logo (keep filename)."
+  ]
+}

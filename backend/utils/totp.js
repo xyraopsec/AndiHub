@@ -43,7 +43,7 @@ export function normalizeBase32(secret) {
 export function makeTotp(secretBase32, email) {
   const cleaned = normalizeBase32(secretBase32);
   return new OTPAuth.TOTP({
-    issuer: 'PeteZah',
+    issuer: 'AndiHub',
     label: String(email || 'account').slice(0, 128),
     algorithm: 'SHA1',
     digits: 6,

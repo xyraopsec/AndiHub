@@ -89,13 +89,13 @@ export default function FirefoxVmPage({ onNavigate }: { onNavigate: (url: string
             className="text-lg font-extrabold mb-1 tracking-tight"
             style={{ color: "hsl(0 0% 100%)" }}
           >
-            PeteZah VM
+            AndiHub VM
           </p>
           <p className="text-sm font-medium mb-1" style={{ color: "hsl(0 0% 96%)" }}>
             Sign in to launch
           </p>
           <p className="text-xs leading-relaxed" style={{ color: "hsl(216 15% 68%)" }}>
-            Firefox in WebAssembly — a real Gecko browser inside PeteZah. Account required.
+            Firefox in WebAssembly — a real Gecko browser inside AndiHub. Account required.
           </p>
         </div>
         <button
@@ -182,7 +182,7 @@ export default function FirefoxVmPage({ onNavigate }: { onNavigate: (url: string
             className="text-[10px] font-bold uppercase tracking-[0.16em] mb-2"
             style={{ color: "hsl(213 75% 68%)" }}
           >
-            PeteZah VMs
+            AndiHub VMs
           </p>
           <h1
             className="text-3xl font-extrabold tracking-tight mb-2"
@@ -229,7 +229,7 @@ export default function FirefoxVmPage({ onNavigate }: { onNavigate: (url: string
         </p>
         <p className="text-[10px] flex items-center gap-1" style={{ color: "hsl(216 15% 52%)" }}>
           <Sparkles size={10} />
-          Use Exit on the VM splash to return to PeteZah
+          Use Exit on the VM splash to return to AndiHub
         </p>
       </div>
       {launching ? (

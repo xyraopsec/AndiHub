@@ -55,7 +55,7 @@ const SITE_PRESETS = [
   { id: "classroom", label: "Google Classroom", favicon: "https://ssl.gstatic.com/classroom/favicon.ico" },
   { id: "schoology",  label: "Schoology",        favicon: "https://asset-cdn.schoology.com/sites/all/themes/schoology_theme/favicon.ico" },
   { id: "google",    label: "Google",            favicon: "https://www.google.com/favicon.ico" },
-  { id: "petezah",   label: "PeteZah",           favicon: "/logo.png" },
+  { id: "petezah",   label: "AndiHub",           favicon: "/logo.png" },
 ];
 
 type Section = "profile" | "proxy" | "get-links" | "achievements" | "appearance" | "cloaking" | "behavior" | "shortcuts" | "data" | "admin" | "users" | "live" | "firefox-vm" | "game-stats" | "link-stats" | "ad-reports" | "monitoring" | "updates" | "ai-prompts";
@@ -1608,7 +1608,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
   function exportData() {
     const data = { localStorage: Object.fromEntries(Object.keys(localStorage).map(k => [k, localStorage.getItem(k)])) };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "petezah-data.json"; a.click();
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "andihub-data.json"; a.click();
   }
 
   function importData(e: React.ChangeEvent<HTMLInputElement>) {
@@ -1632,7 +1632,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
 
   function resetData() {
     if (!confirm("Reset all local settings? This cannot be undone.")) return;
-    localStorage.clear(); setS({}); document.title = "PeteZah";
+    localStorage.clear(); setS({}); document.title = "AndiHub";
   }
 
   async function confirmSecurityAction() {
@@ -1945,7 +1945,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
           style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 16 }}
         >
           <img src={defaultBrandSrc()} alt="" style={{ width: 22, height: 22, objectFit: "contain", borderRadius: 6 }} />
-          <span style={{ fontSize: 13, fontWeight: 650, color: C.text, letterSpacing: "-0.02em" }}>PeteZah</span>
+          <span style={{ fontSize: 13, fontWeight: 650, color: C.text, letterSpacing: "-0.02em" }}>AndiHub</span>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -1963,7 +1963,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
               {authMode === "signin" ? "Welcome back!" : "Create account"}
             </h2>
             <p style={{ margin: "0 0 18px", textAlign: "center", fontSize: 12, color: C.textSub }}>
-              {authMode === "signin" ? "Sign in to PeteZah below" : "Pick a username to get started"}
+              {authMode === "signin" ? "Sign in to AndiHub below" : "Pick a username to get started"}
             </p>
           </motion.div>
         </AnimatePresence>
@@ -2272,7 +2272,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                   </div>
                   <button
                     type="button"
-                    title="About PeteZah"
+                    title="About AndiHub"
                     onClick={() => setAboutOpen(true)}
                     style={{
                       width: 32, height: 32, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center",
@@ -2348,7 +2348,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  <Field label="Username" value={username} onChange={(e: any) => setUsername(e.target.value)} placeholder="petezah" maxLength={32} icon={User} />
+                  <Field label="Username" value={username} onChange={(e: any) => setUsername(e.target.value)} placeholder="andihub" maxLength={32} icon={User} />
                   {username && (
                     <button
                       onClick={() => onNavigate(`petezah://user/@${username}`)}
@@ -2539,7 +2539,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                   Achievements
                 </h2>
                 <p style={{ fontSize: 11, color: C.textSub, margin: "0 0 14px" }}>
-                  Badges unlock as you use PeteZah · {achievementsData?.unlockedCount ?? 0}/{achievementsData?.total ?? 0} unlocked
+                  Badges unlock as you use AndiHub · {achievementsData?.unlockedCount ?? 0}/{achievementsData?.total ?? 0} unlocked
                 </p>
                 {achievementsLoading && !achievementsData ? (
                   <div style={{ display: "flex", justifyContent: "center", padding: 40 }}>
@@ -2908,7 +2908,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                 <Divider />
                 <p style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: C.textMuted, margin: "14px 0 6px" }}>About:Blank</p>
                 <p style={{ fontSize: "11px", color: C.textSub, margin: "0 0 10px" }}>
-                  Open the site disguised inside an about:blank popup. Any PeteZah link ending in <code style={{ fontSize: 10 }}>/#blank</code> does this automatically.
+                  Open the site disguised inside an about:blank popup. Any AndiHub link ending in <code style={{ fontSize: 10 }}>/#blank</code> does this automatically.
                 </p>
                 <button onClick={openAboutBlank} style={{
                   display: "flex", alignItems: "center", gap: "8px", padding: "9px 16px", borderRadius: "8px", marginBottom: "18px",
@@ -4411,7 +4411,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
               >
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                   <div style={{ minWidth: 0, paddingRight: 8 }}>
-                    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 720, color: C.text, overflowWrap: "anywhere" }}>About PeteZah</h3>
+                    <h3 style={{ margin: 0, fontSize: 16, fontWeight: 720, color: C.text, overflowWrap: "anywhere" }}>About AndiHub</h3>
                     <p style={{ margin: "4px 0 0", fontSize: 11, color: C.textSub }}>Credits & legal</p>
                   </div>
                   <button type="button" onClick={() => setAboutOpen(false)} style={{
@@ -4422,7 +4422,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                   </button>
                 </div>
                 <p style={{ margin: "0 0 14px", fontSize: 12, color: C.textSub, lineHeight: 1.55, overflowWrap: "anywhere", wordBreak: "break-word" }}>
-                  PeteZah is a glass browser built for school-friendly browsing, games, music, and more.
+                  AndiHub is a glass browser built for school-friendly browsing, games, music, and more. AndiHub is a fork of PeteZahGames by PeteZah (AGPL-3.0-only). Source code: https://github.com/xyraopsec/AndiHub.
                   Huge thanks to the open projects that make the stack possible.
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>

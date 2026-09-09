@@ -5,7 +5,7 @@ import { X, MessageCircle, Youtube } from "lucide-react";
 const LAST_KEY = "petezah-discord-popup-last";
 const SEEN_KEY = "petezah-socials-first-seen";
 const COOLDOWN_MS = 30 * 60 * 1000;
-const DISCORD_URL = "https://discord.com/invite/arcgZTV9zX";
+const DISCORD_URL = "https://discord.gg/andihub";
 const YOUTUBE_URL = "https://youtube.com/@ngnix062";
 
 export default function DiscordPopup() {

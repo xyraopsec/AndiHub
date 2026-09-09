@@ -305,7 +305,7 @@ export default function SvgAccessGate({ children }: { children: React.ReactNode 
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
         </div>
-        <p className="eyebrow">PeteZah</p>
+        <p className="eyebrow">AndiHub</p>
         <h1>Verify to continue</h1>
         <p className="sub">A quick check keeps the community safe. Agree to our policies, then continue.</p>
         <div className="widget-wrap">
@@ -357,7 +357,7 @@ export default function SvgAccessGate({ children }: { children: React.ReactNode 
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2l2.4 7.2H22l-6 4.8 2.3 7L12 16.8 5.7 21l2.3-7-6-4.8h7.6z" />
           </svg>
-          Secure access · PeteZah
+          Secure access · AndiHub
         </p>
       </div>
     </div>

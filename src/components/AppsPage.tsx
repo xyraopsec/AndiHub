@@ -26,11 +26,11 @@ interface AppsPageProps {
 
 const BUILT_IN_APPS: App[] = [
   { id: "app-request", label: "App Request", url: "https://docs.google.com/forms/d/e/1FAIpQLSfDWiLkFUAcAsVVzb57HFW1xfGY3dSUwbMUhDdinsyESCCYeg/viewform?usp=sf_link", imageUrl: "/storage/images/main/googleforms.jpg", external: true },
-  { id: "pete-ai", label: "PeteAI", url: "petezah://ai", imageUrl: "/storage/images/PeteAI.png", external: true },
+  { id: "pete-ai", label: "AndiAI", url: "petezah://ai", imageUrl: "/storage/images/PeteAI.png", external: true },
   { id: "pete-music", label: marks.music(), url: hrefs.mu(), imageUrl: "/storage/images/petemusic-removebg-preview.png", external: true },
   { id: "pete-movies", label: marks.movies(), url: hrefs.mo(), imageUrl: "/storage/images/pete-movies.png", external: true },
   { id: "pete-firefox", label: "VM", url: "petezah://vm", imageUrl: "/storage/images/pete-firefox.webp", external: true },
-  { id: "pete-chat", label: "PeteChat", url: "petezah://chat", imageUrl: "/storage/images/vortex-petezah.webp", external: true },
+  { id: "pete-chat", label: "AndiChat", url: "petezah://chat", imageUrl: "/storage/images/vortex-petezah.webp", external: true },
   { id: "google", label: "Google", url: "https://www.google.com", imageUrl: "/storage/ag/apps/google/IMG_5324.webp" },
   { id: "youtube", label: "YouTube", url: "https://youtube.com", imageUrl: "/storage/ag/apps/youtube/IMG_5338.webp" },
   { id: "nowgg", label: "Now.gg", url: "https://now.gg", imageUrl: "/storage/ag/apps/nowgg/IMG_5325.png" },

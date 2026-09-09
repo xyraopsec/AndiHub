@@ -978,7 +978,7 @@ function NewTabPage({ onNavigate }: { onNavigate: (url: string) => void }) {
       <NewTabBookmarks onNavigate={onNavigate} />
       <div className="absolute top-3 right-3 z-[10] flex flex-col items-end gap-1.5 newtab-side-actions">
         <motion.a
-          href="https://discord.gg/cYjHFDguxS"
+          href="https://discord.gg/andihub"
           target="_blank"
           rel="noopener noreferrer"
           initial={{ opacity: 0, y: -8 }}
@@ -1037,7 +1037,7 @@ function NewTabPage({ onNavigate }: { onNavigate: (url: string) => void }) {
           className="text-[2rem] sm:text-[2.15rem] font-extrabold text-white tracking-tight"
           style={{ textShadow: "0 0 40px hsla(205, 80%, 60%, 0.25)" }}
         >
-          <ObfuscatedText as="span">PeteZah</ObfuscatedText>
+          <ObfuscatedText as="span">AndiHub</ObfuscatedText>
         </motion.h1>
 
         <motion.div

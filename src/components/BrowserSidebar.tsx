@@ -129,7 +129,7 @@ export default function Sidebar({
               className="text-sm font-semibold tracking-tight truncate"
               style={{ color: "hsla(0,0%,100%,0.92)" }}
             >
-              PeteZah
+              AndiHub
             </ObfuscatedText>
           </motion.div>
         )}

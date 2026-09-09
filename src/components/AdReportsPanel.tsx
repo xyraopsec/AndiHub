@@ -164,7 +164,7 @@ export function AdReportsPanel({ C }: { C: C }) {
         </div>
       </div>
       <p style={{ fontSize: 11, color: C.textSub, margin: "0 0 14px" }}>
-        PeteZah overlay starts vs ExoClick publisher stats. Token stays on the server. Dates in UTC
+        AndiHub overlay starts vs ExoClick publisher stats. Token stays on the server. Dates in UTC
         {ac.timezone && ac.timezone !== "UTC" ? ` · ExoClick ${ac.timezone}` : ""}.
       </p>
 

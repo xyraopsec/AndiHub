@@ -60,7 +60,7 @@ export default function SharedAiPage() {
             textDecoration: "none",
           }}
         >
-          Open PeteZah
+          Open AndiHub
         </Link>
       </header>
 

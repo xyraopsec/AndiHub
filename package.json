@@ -1,8 +1,8 @@
 {
-  "name": "petezah",
+  "name": "andihub",
   "version": "2.0.0",
-  "description": "Anti-censorship privacy browser with proxied access. Report questions to https://discord.gg/cYjHFDguxS.",
-  "author": "PeteZah",
+  "description": "Anti-censorship privacy browser with proxied access. Report questions to https://discord.gg/andihub.",
+  "author": "Andi",
   "license": "AGPL-3.0-only",
   "private": true,
   "type": "module",
@@ -20,7 +20,8 @@
     "ui": "node scripts/ui-studio.mjs",
     "vendor:firefox-wasm": "node scripts/vendor-firefox-wasm.mjs",
     "vendor:cap": "node scripts/vendor-cap.mjs",
-    "build:svg": "node scripts/build-svg.mjs"
+    "build:svg": "node scripts/build-svg.mjs",
+    "brand": "node scripts/apply-branding.mjs"
   },
   "engines": {
     "node": ">=22.0.0"

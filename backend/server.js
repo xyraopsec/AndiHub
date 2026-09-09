@@ -534,8 +534,8 @@ if (IS_DEV) {
     const home = isPeteZahHomeHost(req.headers.host || req.hostname);
     const body = home
       ? {
-          name: 'PeteZah Games',
-          short_name: 'PeteZah',
+          name: 'AndiHub',
+          short_name: 'AndiHub',
           description: 'Games, movies, music, and browse.',
           background_color: '#0A1D37',
           theme_color: '#0A1D37',

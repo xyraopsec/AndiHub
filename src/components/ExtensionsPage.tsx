@@ -131,7 +131,7 @@ export function runExtensionsOnFrame(iframe: HTMLIFrameElement | null | undefine
       if (!isSafeCode(ext.code).safe) continue;
       const script = doc.createElement("script");
       script.setAttribute("data-pz-ext", ext.id);
-      script.textContent = `(function(){try{\n${ext.code}\n}catch(err){console.error("[PeteZah extension]",err);}})();`;
+      script.textContent = `(function(){try{\n${ext.code}\n}catch(err){console.error("[AndiHub extension]",err);}})();`;
       (doc.head || doc.documentElement).appendChild(script);
       set.add(stamp);
     }

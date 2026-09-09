@@ -166,7 +166,7 @@ export function InterstitialOverlay({
         >
           <Loader2 size={18} className="animate-spin" style={{ color: "hsla(0,0%,96%,0.85)" }} />
           <p style={{ margin: 0, fontSize: 12, color: "hsla(0,0%,100%,0.72)" }}>
-            {phase === "ad" ? "Loading — thanks for supporting PeteZah" : "Preparing…"}
+            {phase === "ad" ? "Loading — thanks for supporting AndiHub" : "Preparing…"}
           </p>
         </div>
         <div

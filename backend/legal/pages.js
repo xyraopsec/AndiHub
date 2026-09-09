@@ -30,7 +30,7 @@ export function renderLegalHtml(kind) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#020810" />
-  <title>${escapeHtml(doc.title)} · PeteZah</title>
+  <title>${escapeHtml(doc.title)} · AndiHub</title>
   <style>
     :root {
       --bg0: #020810;
@@ -246,12 +246,12 @@ export function renderLegalHtml(kind) {
   <div class="space-twinkle" aria-hidden="true"></div>
   <header class="top-nav">
     <div class="nav-left">
-      <a class="pz-exit" href="/">← Exit to PeteZah</a>
-      <a class="nav-brand" href="/" aria-label="PeteZah">
-        <img src="/logo.png" alt="PeteZah" height="28" onerror="this.style.display='none'" />
+      <a class="pz-exit" href="/">← Exit to AndiHub</a>
+      <a class="nav-brand" href="/" aria-label="AndiHub">
+        <img src="/logo.png" alt="AndiHub" height="28" onerror="this.style.display='none'" />
       </a>
       <a class="nav-brand-label" href="/">
-        PeteZah <span class="labs-badge">Legal</span>
+        AndiHub <span class="labs-badge">Legal</span>
       </a>
     </div>
     <nav class="nav-links">
@@ -264,7 +264,7 @@ export function renderLegalHtml(kind) {
     <article class="panel">
       <div class="panel-head">
         <div class="logo-tile">${pageIcon(kind)}</div>
-        <p class="eyebrow">PeteZah Legal</p>
+        <p class="eyebrow">AndiHub Legal</p>
         <h1>${escapeHtml(doc.title)}</h1>
         <p class="meta">Effective ${escapeHtml(LEGAL_EFFECTIVE)} · Version ${escapeHtml(LEGAL_VERSION)}</p>
       </div>

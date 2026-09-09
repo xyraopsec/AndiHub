@@ -24,7 +24,7 @@ function publicOrigin() {
   }
   // never build the link from Host / X-Forwarded-Host, an attacker sets those
   // to point the emailed token at their own server. use the canonical origin.
-  return 'https://petezahgames.com';
+  return 'https://andihub.gg/';
 }
 
 export function issueVerificationToken(userId) {
@@ -134,5 +134,5 @@ function verifyPage(ok, message) {
 .card{max-width:420px;padding:28px;border-radius:14px;background:#121c2c;border:1px solid #243044}
 a{color:#6db3ff}</style></head><body><div class="card"><h1 style="font-size:18px;margin:0 0 10px">${title}</h1>
 <p style="margin:0 0 16px;color:#a8b8cc;font-size:14px;line-height:1.5">${message}</p>
-<a href="/">Back to PeteZah</a></div></body></html>`;
+<a href="/">Back to AndiHub</a></div></body></html>`;
 }

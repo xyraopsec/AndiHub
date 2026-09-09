@@ -15,7 +15,7 @@ Document Version: ${LEGAL_VERSION}
 
 IMPORTANT — PLEASE READ CAREFULLY
 
-These Terms of Service (the "Terms") are a binding agreement between you ("you," "your," or "User") and the operators of PeteZah and related domains, mirrors, embeds, and services (collectively, the "Service," "we," "us," or "our").
+These Terms of Service (the "Terms") are a binding agreement between you ("you," "your," or "User") and the operators of AndiHub and related domains, mirrors, embeds, and services (collectively, the "Service," "we," "us," or "our").
 
 BY ACCESSING OR USING THE SERVICE — INCLUDING COMPLETING VERIFICATION, CLICKING "I AGREE," CHECKING AN ACCEPTANCE BOX, OR CONTINUING AFTER NOTICE OF UPDATED TERMS — YOU AGREE TO THESE TERMS, OUR PRIVACY POLICY, AND OUR DMCA / COPYRIGHT POLICY. IF YOU DO NOT AGREE, DO NOT USE THE SERVICE.
 
@@ -24,7 +24,7 @@ These Terms allocate risk clearly. They are not permission to break the law, vio
 
 1. Mission and Nature of the Service
 
-1.1 PeteZah is offered as an anti-censorship and privacy-oriented access tool: a browser-like interface, optional proxy/relay networking, optional account features, optional educational and entertainment catalogs, community features, and advertising-supported free access. Our stated purpose is to help people reach information and tools when ordinary paths are restricted by network filters, geographic blocks, or similar technical barriers — not to promote crime.
+1.1 AndiHub is offered as an anti-censorship and privacy-oriented access tool: a browser-like interface, optional proxy/relay networking, optional account features, optional educational and entertainment catalogs, community features, and advertising-supported free access. Our stated purpose is to help people reach information and tools when ordinary paths are restricted by network filters, geographic blocks, or similar technical barriers — not to promote crime.
 
 1.2 Alternative URLs, mirrors, embeds, and link-sharing tools exist so people can find the Service when mainstream routes are filtered. THAT DOES NOT MEAN WE CONDONE, ENCOURAGE, AUTHORIZE, OR ASSUME RESPONSIBILITY FOR VIOLATING SCHOOL, EMPLOYER, LIBRARY, GOVERNMENT, ISP, PARENTAL, OR OTHER ACCEPTABLE-USE POLICIES. You remain solely responsible for complying with every rule that binds you.
 
@@ -181,7 +181,7 @@ By checking the agreement box on verification or the policy-update notice, or by
 export const PRIVACY_BODY = `Last Updated / Effective Date: ${LEGAL_EFFECTIVE}
 Document Version: ${LEGAL_VERSION}
 
-This Privacy Policy explains what information PeteZah (the "Service," "we," "us") collects, how we use it, and the choices you have. Read it with our Terms of Service and DMCA / Copyright Policy.
+This Privacy Policy explains what information AndiHub (the "Service," "we," "us") collects, how we use it, and the choices you have. Read it with our Terms of Service and DMCA / Copyright Policy.
 
 
 1. Scope
@@ -279,7 +279,7 @@ Community: ${LEGAL_DISCORD}`;
 export const DMCA_BODY = `Last Updated / Effective Date: ${LEGAL_EFFECTIVE}
 Document Version: ${LEGAL_VERSION}
 
-This DMCA / Copyright Policy describes how PeteZah (the "Service," "we," "us") responds to claims of copyright infringement involving material on or linked from our properties.
+This DMCA / Copyright Policy describes how AndiHub (the "Service," "we," "us") responds to claims of copyright infringement involving material on or linked from our properties.
 
 
 1. Respect for Copyright

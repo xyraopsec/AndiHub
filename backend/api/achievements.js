@@ -5,7 +5,7 @@ import { toIPv4 } from '../middleware/security.js';
 import { bumpUsage } from '../utils/usage-daily.js';
 
 export const ACHIEVEMENTS = [
-  { id: 'welcome_explorer', name: 'Welcome Explorer', desc: 'Create a PeteZah account', rarity: 'common', icon: 'Compass', color: '#6ee7b7', manual: false },
+  { id: 'welcome_explorer', name: 'Welcome Explorer', desc: 'Create a AndiHub account', rarity: 'common', icon: 'Compass', color: '#6ee7b7', manual: false },
   { id: 'first_adventure', name: 'First Adventure', desc: 'Play your first game', rarity: 'common', icon: 'Gamepad2', color: '#93c5fd', manual: false },
   { id: 'identity_created', name: 'Identity Created', desc: 'Customize your profile', rarity: 'common', icon: 'UserRound', color: '#a5b4fc', manual: false },
   { id: 'music_starter', name: 'Music Starter', desc: 'Add your first song to your profile', rarity: 'common', icon: 'Music', color: '#f9a8d4', manual: false },
@@ -16,13 +16,13 @@ export const ACHIEVEMENTS = [
   { id: 'internet_explorer', name: 'Internet Explorer', desc: 'Visit 50 different websites through the proxy', rarity: 'rare', icon: 'Globe', color: '#34d399', manual: false },
   { id: 'playlist_creator', name: 'Playlist Creator', desc: 'Create your first playlist', rarity: 'rare', icon: 'ListMusic', color: '#fb7185', manual: false },
   { id: 'social_butterfly', name: 'Social Butterfly', desc: 'Send 100 chat messages', rarity: 'rare', icon: 'MessageCircle', color: '#f472b6', manual: false },
-  { id: 'week_warrior', name: 'Week Warrior', desc: 'Use PeteZah for 7 consecutive days', rarity: 'rare', icon: 'Flame', color: '#fb923c', manual: false },
+  { id: 'week_warrior', name: 'Week Warrior', desc: 'Use AndiHub for 7 consecutive days', rarity: 'rare', icon: 'Flame', color: '#fb923c', manual: false },
   { id: 'profile_artist', name: 'Profile Artist', desc: 'Fully customize your profile', rarity: 'rare', icon: 'Palette', color: '#e879f9', manual: false },
   { id: 'gaming_legend', name: 'Gaming Legend', desc: 'Play 100 different games', rarity: 'epic', icon: 'Trophy', color: '#818cf8', manual: false },
-  { id: 'dedicated_user', name: 'Dedicated User', desc: 'Spend 10 hours on PeteZah', rarity: 'epic', icon: 'Timer', color: '#a78bfa', manual: false },
+  { id: 'dedicated_user', name: 'Dedicated User', desc: 'Spend 10 hours on AndiHub', rarity: 'epic', icon: 'Timer', color: '#a78bfa', manual: false },
   { id: 'community_star', name: 'Community Star', desc: 'Receive 50 profile views', rarity: 'epic', icon: 'Star', color: '#fbbf24', manual: false },
   { id: 'achievement_hunter', name: 'Achievement Hunter', desc: 'Unlock 10 other achievements', rarity: 'epic', icon: 'Medal', color: '#f59e0b', manual: false },
-  { id: 'power_user', name: 'Power User', desc: 'Spend 100 hours on PeteZah', rarity: 'legendary', icon: 'Rocket', color: '#f43f5e', manual: false },
+  { id: 'power_user', name: 'Power User', desc: 'Spend 100 hours on AndiHub', rarity: 'legendary', icon: 'Rocket', color: '#f43f5e', manual: false },
   { id: 'ultimate_explorer', name: 'Ultimate Explorer', desc: 'Play 1000 games', rarity: 'legendary', icon: 'Sparkles', color: '#ec4899', manual: false },
   { id: 'beta_pioneer', name: 'Beta Pioneer', desc: 'Joined during beta / early access', rarity: 'legendary', icon: 'FlaskConical', color: '#14b8a6', manual: true },
   { id: 'bug_hunter', name: 'Bug Hunter', desc: 'Report a verified bug', rarity: 'legendary', icon: 'Bug', color: '#22c55e', manual: true },

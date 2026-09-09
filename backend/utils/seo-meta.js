@@ -1,4 +1,4 @@
-const HOME_HOSTS = new Set(["petezahgames.com"]);
+const HOME_HOSTS = new Set(["petezahgames.com", "andihub.gg"]);
 
 export function normalizeHost(host) {
   return String(host || "")
@@ -42,35 +42,35 @@ export const EDU_SEO = {
 };
 
 export const HOME_SEO = {
-  title: "PeteZah Games — Unblocked Games, Proxy Browser, Movies & Music",
+  title: "AndiHub — Unblocked Games, Proxy Browser, Movies & Music",
   description:
-    "PeteZah Games is a free unblocked games site and private proxy browser. Play HTML5 games at school, unblock YouTube and Reddit, stream movies and music, and browse with a fast web proxy.",
+    "AndiHub is a free unblocked games site and private proxy browser. Play HTML5 games at school, unblock YouTube and Reddit, stream movies and music, and browse with a fast web proxy.",
   keywords:
-    "unblocked games, unblocked games at school, proxy, web proxy, proxy browser, unblock youtube, petezah, petezah games, petezahgames, unblocked proxy, private browser, html5 games, unblocked movies, unblocked music, chromebook games, school proxy",
-  siteName: "PeteZah Games",
-  author: "PeteZah",
+    "unblocked games, unblocked games at school, proxy, web proxy, proxy browser, unblock youtube, andihub, andi hub, unblocked proxy, private browser, html5 games, unblocked movies, unblocked music, chromebook games, school proxy",
+  siteName: "AndiHub",
+  author: "Andi",
   themeColor: "#020810",
-  url: "https://petezahgames.com/",
+  url: "https://andihub.gg/",
   robots: "index, follow",
-  ogImage: "https://petezahgames.com/og-share.png",
+  ogImage: "https://andihub.gg/og-share.png",
   ogImageWidth: "1200",
   ogImageHeight: "630",
-  ogImageAlt: "PeteZah Games — Unblocked Games and Proxy Browser",
-  twitter: "@petezahgames",
+  ogImageAlt: "AndiHub — Unblocked Games, Proxy Browser, Movies & Music",
+  twitter: "@andihub",
   jsonLd: {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "PeteZah Games",
-    alternateName: ["PeteZah", "PeteZahGames"],
+    name: "AndiHub",
+    alternateName: ["Andi", "AndiHub"],
     description:
       "Unblocked games, proxy browser, movies, and music. Play at school and browse privately.",
-    url: "https://petezahgames.com/",
-    logo: "https://petezahgames.com/logo.png",
-    image: "https://petezahgames.com/og-share.png",
+    url: "https://andihub.gg/",
+    logo: "https://andihub.gg/logo.png",
+    image: "https://andihub.gg/og-share.png",
     areaServed: "Worldwide",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://petezahgames.com/?q={search_term_string}",
+      target: "https://andihub.gg/?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   },

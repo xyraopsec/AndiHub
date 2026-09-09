@@ -4,10 +4,10 @@ Large `.zst` binaries are gitignored. After pull on the VPS:
 
 ```bash
 npm run vendor:firefox-wasm
-pm2 restart PeteZahGames
+pm2 restart AndiHub
 ```
 
-The vendor script downloads `chrome-demo-v0.0.1.tar.gz` (resolved via GitHub API), patches Wisp/start URL, restores PeteZah shell UI, and syncs into `dist/firefox-wasm` when `dist/` exists.
+The vendor script downloads `chrome-demo-v0.0.1.tar.gz` (resolved via GitHub API), patches Wisp/start URL, restores AndiHub shell UI, and syncs into `dist/firefox-wasm` when `dist/` exists.
 
 If nginx uses `try_files … /index.html`, missing `/firefox-wasm/*` files will return HTML and break CSS. Make sure vendor succeeded (`chrome-assets.tar.zst` and `gecko.wasm.zst` must exist under `public/firefox-wasm/`).
 

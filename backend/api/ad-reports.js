@@ -401,7 +401,7 @@ function buildInsights({ ours, exoclick, compare, balance, yesterday }) {
     out.push({
       tone: 'warn',
       title: 'ExoClick API token missing',
-      body: 'Set EXOCLICK_API_TOKEN in backend/.env.production and restart PeteZahG.',
+      body: 'Set EXOCLICK_API_TOKEN in backend/.env.production and restart AndiHubG.',
     });
   } else if (exoclick.error && String(exoclick.error).startsWith('auth')) {
     out.push({
@@ -413,7 +413,7 @@ function buildInsights({ ours, exoclick, compare, balance, yesterday }) {
     out.push({
       tone: 'warn',
       title: 'ExoClick API unavailable',
-      body: `Could not load publisher stats (${exoclick.error}). Local PeteZah counts below still work. Datacenter IPs are sometimes blocked — set EXOCLICK_HTTP_PROXY if needed.`,
+      body: `Could not load publisher stats (${exoclick.error}). Local AndiHub counts below still work. Datacenter IPs are sometimes blocked — set EXOCLICK_HTTP_PROXY if needed.`,
     });
   }
 
@@ -421,13 +421,13 @@ function buildInsights({ ours, exoclick, compare, balance, yesterday }) {
     out.push({
       tone: 'info',
       title: 'No views yet today',
-      body: 'Neither PeteZah nor ExoClick has counted a video ad view today. That is normal early in the day or if traffic is light.',
+      body: 'Neither AndiHub nor ExoClick has counted a video ad view today. That is normal early in the day or if traffic is light.',
     });
   } else if (exoToday === 0 && oursToday > 0 && !exoclick.error) {
     out.push({
       tone: 'warn',
       title: 'We counted views ExoClick has not',
-      body: `PeteZah recorded ${oursToday} started ads today, but ExoClick reports 0. Reporting often lags a few hours.`,
+      body: `AndiHub recorded ${oursToday} started ads today, but ExoClick reports 0. Reporting often lags a few hours.`,
     });
   } else if (oursToday === 0 && exoToday > 0) {
     out.push({
@@ -447,7 +447,7 @@ function buildInsights({ ours, exoclick, compare, balance, yesterday }) {
       out.push({
         tone: 'warn',
         title: 'View counts diverge',
-        body: `PeteZah ${oursToday} vs ExoClick ${exoToday} (gap ${Math.abs(compare.delta)}).`,
+        body: `AndiHub ${oursToday} vs ExoClick ${exoToday} (gap ${Math.abs(compare.delta)}).`,
       });
     }
   }
