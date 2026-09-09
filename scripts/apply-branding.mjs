@@ -14,6 +14,9 @@ const warnings = [];
 let applied = 0;
 let skipped = 0;
 
+const toLF = (s) => String(s).split("\r\n").join("\n");
+const toEOL = (s, eol) => (eol === "\r\n" ? toLF(s).split("\n").join("\r\n") : toLF(s));
+
 function rule(file, find, replace, opts = {}) {
   const { required = true, expect = 1, label = "" } = opts;
   const p = path.join(ROOT, file);
@@ -25,17 +28,27 @@ function rule(file, find, replace, opts = {}) {
     return;
   }
   const rep = tpl(replace);
-  if (src.includes(rep) && !src.includes(find)) {
+  // EOL-agnostic matching: try find as-is, then the other line-ending style.
+  const finds = [find];
+  const alt = find.includes("\r\n") ? toLF(find) : toEOL(find, "\r\n");
+  if (alt !== find) finds.push(alt);
+  const reps = [rep];
+  const repAlt = rep.includes("\r\n") ? toLF(rep) : toEOL(rep, "\r\n");
+  if (repAlt !== rep) reps.push(repAlt);
+  const hasRep = reps.some((v) => src.includes(v));
+  const hit = finds.find((v) => src.includes(v));
+  if (hasRep && !hit) {
     skipped++;
     return;
   }
-  const n = src.split(find).length - 1;
-  if (n === 0) {
-    (required ? failures : warnings).push(`${required ? "MISS" : "skip"}: ${file} :: ${(label || find).slice(0, 90)}`);
+  if (!hit) {
+    (required ? failures : warnings).push(`${required ? "MISS" : "skip"}: ${file} :: ${(label || toLF(find)).slice(0, 90)}`);
     return;
   }
-  if (expect && n !== expect) warnings.push(`count ${n}!=${expect}: ${file} :: ${(label || find).slice(0, 90)}`);
-  fs.writeFileSync(p, src.split(find).join(rep));
+  const n = src.split(hit).length - 1;
+  if (expect && n !== expect) warnings.push(`count ${n}!=${expect}: ${file} :: ${(label || toLF(find)).slice(0, 90)}`);
+  const useRep = hit.includes("\r\n") ? toEOL(rep, "\r\n") : toLF(rep);
+  fs.writeFileSync(p, src.split(hit).join(useRep));
   applied++;
 }
 
@@ -49,7 +62,6 @@ rule("src/main.tsx", `document.title = isHomeHost() ? "PeteZah" : "HypeStudy";`,
 
 // ── wordmarks ────────────────────────────────────────────────
 rule("src/components/BrowserSidebar.tsx", "PeteZah\r\n            </ObfuscatedText>", "{{brand}}\r\n            </ObfuscatedText>");
-rule("src/components/BrowserSidebar.tsx", "PeteZah\n            </ObfuscatedText>", "{{brand}}\n            </ObfuscatedText>", { required: false });
 rule("src/components/ContentArea.tsx", `<ObfuscatedText as="span">PeteZah</ObfuscatedText>`, `<ObfuscatedText as="span">{{brand}}</ObfuscatedText>`);
 
 // ── about / credit (AGPL: keep credit + offer source) ───────
