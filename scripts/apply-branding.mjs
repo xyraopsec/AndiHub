@@ -37,7 +37,9 @@ function rule(file, find, replace, opts = {}) {
   if (repAlt !== rep) reps.push(repAlt);
   const hasRep = reps.some((v) => src.includes(v));
   const hit = finds.find((v) => src.includes(v));
-  if (hasRep && !hit) {
+  // split/join replaces every occurrence, so a present replacement means done —
+  // this also covers prepend-style rules whose replacement contains the anchor.
+  if (hasRep) {
     skipped++;
     return;
   }
@@ -57,8 +59,9 @@ rule("package.json", `"name": "petezah"`, `"name": "{{packageName}}"`);
 rule("package.json", `"author": "PeteZah"`, `"author": "{{author}}"`);
 rule("package.json", "Report questions to https://discord.gg/cYjHFDguxS.", "Report questions to {{discordInvite}}.");
 
-// ── client title ─────────────────────────────────────────────
-rule("src/main.tsx", `document.title = isHomeHost() ? "PeteZah" : "HypeStudy";`, `document.title = isHomeHost() ? "{{brand}}" : "HypeStudy";`);
+// ── client title (always AndiHub; EDU cloak identity retired on the fork) ──
+rule("src/main.tsx", `document.title = isHomeHost() ? "AndiHub" : "HypeStudy";`, `document.title = "{{brand}}";`);
+rule("src/main.tsx", `document.title = isHomeHost() ? "PeteZah" : "HypeStudy";`, `document.title = "{{brand}}";`);
 
 // ── wordmarks ────────────────────────────────────────────────
 rule("src/components/BrowserSidebar.tsx", "PeteZah\r\n            </ObfuscatedText>", "{{brand}}\r\n            </ObfuscatedText>");
@@ -87,6 +90,22 @@ rule("src/components/DiscordPopup.tsx", `const DISCORD_URL = "https://discord.co
 
 // ── backend: seo / home host ─────────────────────────────────
 rule("backend/utils/seo-meta.js", `new Set(["petezahgames.com"])`, `new Set(["petezahgames.com", "{{domain}}"])`);
+rule(
+  "backend/utils/seo-meta.js",
+  "export function isPeteZahHomeHost(host) {",
+  `// AndiHub: the deployed origin (PUBLIC_ORIGIN) counts as a home host, so the
+// AndiHub identity + manifest are served on your own domain, not the EDU cloak.
+try {
+  const __po = String(process.env.PUBLIC_ORIGIN || "").trim();
+  if (__po && !__po.includes("example")) {
+    const __h = new URL(__po.startsWith("http") ? __po : "https://" + __po).hostname
+      .replace(/^www\\./, "")
+      .toLowerCase();
+    if (__h) HOME_HOSTS.add(__h);
+  }
+} catch {}
+export function isPeteZahHomeHost(host) {`
+);
 rule("backend/utils/seo-meta.js", `title: "PeteZah Games — Unblocked Games, Proxy Browser, Movies & Music",`, `title: "{{brand}} — {{tagline}}",`);
 rule(
   "backend/utils/seo-meta.js",

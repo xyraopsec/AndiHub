@@ -136,5 +136,13 @@
     "typescript-eslint": "^8.38.0",
     "vite": "^6.4.3",
     "vitest": "^3.2.4"
+  },
+  "allowScripts": {
+    "@swc/core@1.16.2": true,
+    "bcrypt@6.0.0": true,
+    "better-sqlite3@12.11.1": true,
+    "bufferutil@4.1.0": true,
+    "esbuild@0.28.2": true,
+    "esbuild@0.25.12": true
   }
 }

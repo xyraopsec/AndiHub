@@ -8,6 +8,17 @@ export function normalizeHost(host) {
     .replace(/^www\./, "");
 }
 
+// AndiHub: the deployed origin (PUBLIC_ORIGIN) counts as a home host, so the
+// AndiHub identity + manifest are served on your own domain, not the EDU cloak.
+try {
+  const __po = String(process.env.PUBLIC_ORIGIN || "").trim();
+  if (__po && !__po.includes("example")) {
+    const __h = new URL(__po.startsWith("http") ? __po : "https://" + __po).hostname
+      .replace(/^www\./, "")
+      .toLowerCase();
+    if (__h) HOME_HOSTS.add(__h);
+  }
+} catch {}
 export function isPeteZahHomeHost(host) {
   return HOME_HOSTS.has(normalizeHost(host));
 }

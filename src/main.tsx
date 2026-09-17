@@ -45,7 +45,7 @@ function applyStoredSettings() {
     document.title = siteTitle;
   } else {
     setTimeout(() => {
-      document.title = isHomeHost() ? "AndiHub" : "HypeStudy";
+      document.title = "AndiHub";
     }, 3000);
   }
 

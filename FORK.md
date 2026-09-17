@@ -76,6 +76,22 @@ GitHub web editor (rare; branding touches stable display strings).
 > Scheduled workflows on forks pause after 60 days without activity — hit
 > *Run workflow* manually if syncs stop.
 
+## Fork-specific fixes (not upstream)
+
+- `backend/utils/secrets.js` (new file): upstream ships only `secrets.ts` while
+  the server imports `./secrets.js`, so `npm start` crashes on a fresh clone.
+  The shim re-exports the `.ts` (plain erasable JS — runs on Node 22.6+).
+  If upstream ever adds their own `secrets.js`, the sync merge will conflict —
+  keep this file in that case.
+- `PUBLIC_ORIGIN` doubles as the home-host signal: whatever domain you deploy
+  is added to `HOME_HOSTS`, so your domain serves the AndiHub SEO identity +
+  manifest. Unknown hosts still get the EDU cloak. Client tab title is always
+  AndiHub now.
+- `TMDB_API_KEY` is **required to boot** (upstream `assertProductionSecrets`
+  throws without it). Free key: `https://www.themoviedb.org/settings/api`.
+- First visit shows a bot-verification gate (`/verify`, Cap.js) by design —
+  humans pass once, then browse. `curl` will only ever see the 302.
+
 ## TODO before going public
 
 - [ ] Real domain in `branding.json` (`domain`, `siteUrl`, mails) + `PUBLIC_ORIGIN`
