@@ -179,7 +179,10 @@ function makeNewTabEntry(spaceId: string): Tab {
 export function useBrowserState() {
   const [spaces] = useState<Space[]>(DEFAULT_SPACES);
   const [activeSpaceId] = useState("main");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  // AndiHub: start expanded so first-time users see labeled navigation,
+  // not a wall of mystery icons. (Not persisted — returning users keep
+  // whatever they set via the collapse toggle.)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [splitTabId, setSplitTabId] = useState<string | null>(null);
   const [focusedPane, setFocusedPane] = useState<"main" | "split">("main");
   const [urlInput, setUrlInput] = useState("");

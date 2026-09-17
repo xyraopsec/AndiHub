@@ -96,6 +96,18 @@ Environment (`backend/.env.example` — nothing branded in there, just fill in):
 - First visit shows a bot-verification gate (`/verify`, Cap.js) by design —
   humans pass once, then browse. `curl` will only ever see the 302.
 
+## UX clarity changes (AndiHub-only)
+
+Non-technical users found the navbar cryptic, so on top of upstream:
+- Sidebar starts **expanded** (`useBrowserState.ts`) with a labeled
+  *"What can I do here?"* feature list incl. one-line plain descriptions.
+- First-run **guide overlay** + capability cards on every new tab
+  (`src/components/AndiHubGuide.tsx` — new file, zero conflict risk) with a
+  permanent Guide button in the sidebar.
+- These files are in the sync workflow's protected list, so upstream conflicts
+  there fail loudly instead of silently dropping the clarity work:
+  `BrowserSidebar.tsx`, `ContentArea.tsx`, `useBrowserState.ts`.
+
 ## TODO before going public
 
 - [ ] Real domain in `branding.json` (`domain`, `siteUrl`, mails) + `PUBLIC_ORIGIN`

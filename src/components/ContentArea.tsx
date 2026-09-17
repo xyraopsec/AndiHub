@@ -50,6 +50,7 @@ import { runExtensionsOnFrame } from "./ExtensionsPage";
 import { injectRivetIntoFrame, syncRivetTab } from "@/lib/rivet/host";
 import { requestSyncSoon } from "@/lib/settingsSync";
 import { openTrendingOverlay } from "@/lib/homeUrl";
+import GuideOverlay, { GuideCards } from "@/components/AndiHubGuide";
 import { hrefs, isGHref, marks } from "@/lib/uiMarks";
 import { pathForTabUrl, trackSection } from "@/lib/lessonMetrics";
 import { GameLaunchSplash } from "@/components/GameLaunchSplash";
@@ -985,6 +986,7 @@ function NewTabPage({ onNavigate }: { onNavigate: (url: string) => void }) {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-transparent">
       <NewTabBookmarks onNavigate={onNavigate} />
+      <GuideOverlay onNavigate={onNavigate} />
       <div className="absolute top-3 right-3 z-[10] flex flex-col items-end gap-1.5 newtab-side-actions">
         <motion.a
           href="https://discord.gg/andihub"
@@ -1100,6 +1102,25 @@ function NewTabPage({ onNavigate }: { onNavigate: (url: string) => void }) {
           }}
         >
           <VpnSelector onNavigate={onNavigate} />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.55,
+            delay: 0.5 + presets.length * 0.03,
+            ease,
+          }}
+          className="w-full flex flex-col items-center gap-2"
+        >
+          <span
+            className="text-[10px] font-bold uppercase"
+            style={{ color: "hsla(0,0%,100%,0.42)", letterSpacing: "0.16em" }}
+          >
+            What can I do here?
+          </span>
+          <GuideCards onNavigate={onNavigate} />
         </motion.div>
       </div>
       <AnimatePresence>

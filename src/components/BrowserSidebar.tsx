@@ -8,6 +8,7 @@ import {
   Bookmark,
   Puzzle,
   Command,
+  Compass,
   Bot,
   Music,
   Film,
@@ -17,6 +18,7 @@ import {
   Monitor,
   Wrench,
 } from "lucide-react";
+import { openGuide } from "@/components/AndiHubGuide";
 import { TabList } from "@/components/TabItem";
 import ObfuscatedText from "@/components/ObfuscatedText";
 import { Tab, Space } from "@/hooks/useBrowserState";
@@ -52,14 +54,14 @@ interface SidebarProps {
 }
 
 const SIDEBAR_FEATURES = [
-  { icon: Gamepad2, label: marks.a(), url: hrefs.g() },
-  { icon: AppWindow, label: marks.apps(), url: "petezah://apps" },
-  { icon: Bot, label: "AI", url: "petezah://ai" },
-  { icon: Music, label: marks.music(), url: hrefs.mu() },
-  { icon: Film, label: marks.movies(), url: hrefs.mo() },
-  { icon: Monitor, label: "VM", url: "petezah://vm" },
-  { icon: MessageCircle, label: "Chat", url: "petezah://chat" },
-  { icon: Wrench, label: "Tools", url: "petezah://tools" },
+  { icon: Gamepad2, label: marks.a(), desc: "400+ free games, nothing to install", url: hrefs.g() },
+  { icon: AppWindow, label: marks.apps(), desc: "Handy mini apps", url: "petezah://apps" },
+  { icon: Bot, label: "AI", desc: "Homework help — just ask", url: "petezah://ai" },
+  { icon: Music, label: marks.music(), desc: "Songs & playlists", url: hrefs.mu() },
+  { icon: Film, label: marks.movies(), desc: "Films & shows to stream", url: hrefs.mo() },
+  { icon: Monitor, label: "VM", desc: "A full computer inside a tab", url: "petezah://vm" },
+  { icon: MessageCircle, label: "Chat", desc: "Talk with the community", url: "petezah://chat" },
+  { icon: Wrench, label: "Tools", desc: "Extras & utilities", url: "petezah://tools" },
 ];
 
 export default function Sidebar({
@@ -192,13 +194,13 @@ export default function Sidebar({
             className="flex flex-col items-center gap-0.5 py-2 flex-shrink-0"
             style={{ borderTop: "1px solid hsla(210, 40%, 80%, 0.08)" }}
           >
-            {SIDEBAR_FEATURES.map(({ icon: Icon, label, url }) => (
+            {SIDEBAR_FEATURES.map(({ icon: Icon, label, desc, url }) => (
               <button
                 key={label}
                 onClick={() => onNavigate(url)}
                 className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all"
                 style={{ color: "hsla(0,0%,100%,0.78)" }}
-                title={label}
+                title={`${label} — ${desc}`}
               >
                 <Icon size={13} />
               </button>
@@ -268,33 +270,51 @@ export default function Sidebar({
             className="px-2 py-1 flex-shrink-0"
             style={{ borderTop: "1px solid hsla(210, 40%, 80%, 0.08)" }}
           >
-            <div className="grid grid-cols-4 gap-x-0 gap-y-0 mb-1.5 sidebar-feature-grid">
-              {SIDEBAR_FEATURES.map(({ icon: Icon, label, url }) => (
+            <div className="px-2 pt-0.5 pb-1 text-[9px] font-bold uppercase tracking-[0.14em] sidebar-section-label" style={{ color: "hsla(0,0%,100%,0.38)" }}>
+              What can I do here?
+            </div>
+            <div className="flex flex-col gap-0.5 mb-1.5">
+              {SIDEBAR_FEATURES.map(({ icon: Icon, label, desc, url }) => (
                 <button
                   key={label}
                   onClick={() => onNavigate(url)}
-                  className="group flex flex-col items-center gap-0.5 py-0 bg-transparent border-none cursor-pointer sidebar-feature-btn"
+                  title={`${label} — ${desc}`}
+                  className="group flex items-center gap-2.5 px-2.5 py-[7px] rounded-xl bg-transparent border-none cursor-pointer text-left w-full hover:bg-white/5 transition-all sidebar-feature-btn"
                   style={{ color: "hsla(0,0%,100%,0.78)" }}
                 >
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/[0.08] sidebar-feature-icon">
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/[0.08] sidebar-feature-icon flex-shrink-0">
                     <Icon size={14} />
                   </span>
-                  <ObfuscatedText as="span" className="text-[9px] leading-tight sidebar-feature-label" style={{ color: "hsla(0,0%,100%,0.55)" }}>
-                    {label}
-                  </ObfuscatedText>
+                  <span className="flex flex-col min-w-0">
+                    <ObfuscatedText as="span" className="text-[11px] font-semibold leading-tight sidebar-feature-label" style={{ color: "hsla(0,0%,100%,0.88)" }}>
+                      {label}
+                    </ObfuscatedText>
+                    <span className="text-[9px] leading-tight truncate" style={{ color: "hsla(0,0%,100%,0.5)" }}>
+                      {desc}
+                    </span>
+                  </span>
                 </button>
               ))}
             </div>
 
             <div className="flex items-center gap-1 mb-1.5">
-              {[
-                { icon: Bookmark, label: "Saved", url: "petezah://bookmarks" },
-                { icon: History, label: "History", url: "petezah://history" },
-                { icon: Puzzle, label: "Extensions", url: "petezah://extensions" },
-              ].map(({ icon: Icon, label, url }) => (
+              {([
+                { icon: Bookmark, label: "Saved", desc: "Your bookmarked pages", url: "petezah://bookmarks" },
+                { icon: History, label: "History", desc: "Pages you visited", url: "petezah://history" },
+                { icon: Puzzle, label: "Extensions", desc: "Extra tools", url: "petezah://extensions" },
+                { icon: Compass, label: "Guide", desc: "What can I do here?", url: "", action: "guide" },
+              ] as { icon: any; label: string; desc: string; url: string; action?: string }[]).map(({ icon: Icon, label, desc, url, action }) => (
                 <button
                   key={label}
-                  onClick={() => onNavigate(url)}
+                  title={`${label} — ${desc}`}
+                  onClick={() => {
+                    if (action === "guide") {
+                      onNavigate("petezah://newtab");
+                      setTimeout(() => openGuide(), 350);
+                    } else if (url) {
+                      onNavigate(url);
+                    }
+                  }}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-white/5 transition-all"
                   style={{ color: "hsla(0,0%,100%,0.72)" }}
                 >

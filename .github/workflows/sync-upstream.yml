@@ -34,8 +34,8 @@ jobs:
           if [ -n "$CONFLICTS" ]; then
             echo "conflicted files:"
             echo "$CONFLICTS"
-            # Fork-structural files: never auto-resolve, need a human.
-            PROTECTED="package.json backend/utils/seo-meta.js backend/utils/secrets.js scripts/apply-branding.mjs branding.json branding FORK.md railway.json .github"
+            # Fork-structural + UX-clarity files: never auto-resolve, need a human.
+            PROTECTED="package.json backend/utils/seo-meta.js backend/utils/secrets.js scripts/apply-branding.mjs branding.json branding FORK.md railway.json .github src/components/BrowserSidebar.tsx src/components/ContentArea.tsx src/hooks/useBrowserState.ts"
             MANUAL=0
             for f in $CONFLICTS; do
               SKIP=0
