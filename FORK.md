@@ -67,9 +67,13 @@ Environment (`backend/.env.example` — nothing branded in there, just fill in):
 
 `.github/workflows/sync-upstream.yml` runs daily (04:00 UTC, plus manual
 *Run workflow*): merges `PeteZah-Games/PeteZahGames@main` into this repo's
-`main`, re-applies branding, pushes. If upstream edits the exact same lines as
-a branding rule, the merge conflicts and the run fails — resolve it in the
-GitHub web editor (rare; branding touches stable display strings).
+`main`, re-applies branding, pushes. Conflict handling:
+- Pure display-copy files auto-resolve (take upstream, re-brand after).
+- Fork-structural files (`package.json`, `seo-meta.js`, `secrets.js`,
+  `apply-branding.mjs`, `branding/*`, workflow, `FORK.md`, `railway.json`)
+  fail the run loudly — resolve those in the GitHub web editor (rare).
+- If upstream rewrites a branded sentence entirely, the branding script misses
+  it and fails loudly too — port the rule to the new wording (see script).
 
 > **One-time setting:** repo → Settings → Actions → General → *Workflow
 > permissions* → **Read and write permissions**, otherwise the bot can't push.

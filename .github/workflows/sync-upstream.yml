@@ -1,7 +1,8 @@
 name: Sync upstream
 
 # Merges PeteZahGames main into this fork daily, re-applies AndiHub branding,
-# pushes. If a merge conflicts, the run fails and you resolve it in the web editor.
+# pushes. Pure-branding conflicts auto-resolve (take upstream, re-brand);
+# anything structural fails loudly for manual resolution in the web editor.
 on:
   schedule:
     - cron: "0 4 * * *"
@@ -28,7 +29,33 @@ jobs:
           git config user.email "andihub-sync[bot]@users.noreply.github.com"
           git remote add upstream https://github.com/PeteZah-Games/PeteZahGames.git || true
           git fetch upstream main
-          git merge --no-edit upstream/main
+          git merge --no-edit upstream/main || true
+          CONFLICTS=$(git diff --name-only --diff-filter=U || true)
+          if [ -n "$CONFLICTS" ]; then
+            echo "conflicted files:"
+            echo "$CONFLICTS"
+            # Fork-structural files: never auto-resolve, need a human.
+            PROTECTED="package.json backend/utils/seo-meta.js backend/utils/secrets.js scripts/apply-branding.mjs branding.json branding FORK.md railway.json .github"
+            MANUAL=0
+            for f in $CONFLICTS; do
+              SKIP=0
+              for p in $PROTECTED; do
+                case "$f" in "$p"|"$p"/*) SKIP=1; break;; esac
+              done
+              if [ "$SKIP" = "1" ]; then
+                echo "MANUAL resolution needed: $f"
+                MANUAL=1
+              else
+                echo "auto-resolving (take upstream, re-brand after): $f"
+                git checkout --theirs -- "$f"
+              fi
+            done
+            if [ "$MANUAL" = "1" ]; then
+              echo "structural conflicts need manual resolution in the web editor"
+              git merge --abort || true
+              exit 1
+            fi
+          fi
       - name: Re-apply branding
         run: node scripts/apply-branding.mjs
       - name: Commit and push
