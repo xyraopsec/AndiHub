@@ -170,6 +170,8 @@ rule("src/components/FirefoxVmPage.tsx", "Use Exit on the VM splash to return to
 rule("src/components/SharedAiPage.tsx", "Open PeteZah", "Open {{brand}}");
 rule("src/components/SvgAccessGate.tsx", `<p className="eyebrow">PeteZah</p>`, `<p className="eyebrow">{{brand}}</p>`);
 rule("src/components/SvgAccessGate.tsx", "Secure access · PeteZah", "Secure access · {{brand}}");
+rule("public/verify.html", `<p class="eyebrow">PeteZah</p>`, `<p class="eyebrow">{{brand}}</p>`);
+rule("public/verify.html", "Secure access · PeteZah", "Secure access · {{brand}}");
 rule("src/components/AppsPage.tsx", `label: "PeteAI"`, `label: "{{aiName}}"`);
 rule("src/components/AppsPage.tsx", `label: "PeteChat"`, `label: "AndiChat"`);
 rule("src/components/AdReportsPanel.tsx", "PeteZah overlay starts vs ExoClick", "{{brand}} overlay starts vs ExoClick");
