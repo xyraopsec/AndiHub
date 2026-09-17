@@ -65,6 +65,7 @@ import { adminUserActionHandler } from './api/admin-user-action.js';
 import { getAdminUsersHandler, getAdminUserHandler, getAdminUserRevealHandler, getAdminStaffHandler, getBadgeRarityLeaderboardHandler } from './api/admin-users.js';
 import { createIpBanMiddleware } from './middleware/ip-ban.js';
 import { getChangelogHandler, createChangelogHandler, deleteChangelogHandler } from './api/changelog.js';
+import { listNotificationsHandler, markNotificationsReadHandler } from './api/notifications.js';
 import { getFeedbackHandler, createFeedbackHandler, deleteFeedbackHandler } from './api/feedback.js';
 import {
   reportPresenceHandler,
@@ -468,6 +469,9 @@ app.post('/api/admin/announcements/:id/active', setAnnouncementActiveHandler);
 
 app.post('/api/presence', reportPresenceHandler);
 app.get('/api/announcements/active', getActiveAnnouncementHandler);
+
+app.get('/api/notifications', listNotificationsHandler);
+app.post('/api/notifications/read', markNotificationsReadHandler);
 
 app.post('/api/games/play', gamePlayLimiter, recordGamePlayHandler);
 app.get('/api/games/plays', getGamePlaysMapHandler);

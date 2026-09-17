@@ -63,6 +63,16 @@ export async function createFeedbackHandler(req, res) {
   const id = randomUUID();
   const now = Date.now();
   db.prepare('INSERT INTO feedback (id, user_id, content, created_at) VALUES (?, ?, ?, ?)').run(id, req.session.user.id, content, now);
+  try {
+    const { createMentionNotifications } = await import('../utils/mentions.js');
+    createMentionNotifications({
+      actorId: req.session.user.id,
+      text: content,
+      refType: 'feedback',
+      refId: id,
+      preview: content,
+    });
+  } catch {}
   const author = db.prepare('SELECT username, email FROM users WHERE id = ?').get(req.session.user.id);
   res.status(201).json({
     message: 'Feedback submitted',

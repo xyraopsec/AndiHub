@@ -88,6 +88,16 @@ export async function addCommentHandler(req, res) {
     sanitizedContent,
     now
   );
+  try {
+    const { createMentionNotifications } = await import('../utils/mentions.js');
+    createMentionNotifications({
+      actorId: req.session.user.id,
+      text: sanitizedContent,
+      refType: 'comment',
+      refId: id,
+      preview: sanitizedContent,
+    });
+  } catch {}
   const me = db.prepare('SELECT username, avatar_url FROM users WHERE id = ?').get(req.session.user.id);
   res.json({
     message: 'Comment posted.',

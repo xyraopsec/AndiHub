@@ -86,17 +86,35 @@ We may investigate and cooperate with schools, employers, ISPs, platforms, payme
 5.4 We may block destinations, strip headers, rewrite URLs, terminate connections, or refuse proxying for safety, legal, or abuse reasons.
 
 
-6. Catalogs, Embeds, Games, and Third-Party Media (Transparency)
+6. Catalogs, Games, Music, and Audiovisual Features (Architecture & Transparency)
 
-6.1 The Service may offer catalogs of games, apps, embeds, and links to third-party sites. Copyright and trademarks belong to their respective owners unless we expressly state otherwise.
+6.1 GENERAL. The Service may offer catalogs, embeds, deep links, metadata browsers, and technical interfaces that help you discover or request third-party content. Copyrights, trademarks, and other rights belong to their respective owners unless we expressly state otherwise. Catalog availability is not a representation that we own the underlying works, that distribution is authorized in every jurisdiction, or that a title will remain available.
 
-6.2 Catalog availability is not a representation that we own the underlying works, that distribution is authorized in every jurisdiction, or that a title will remain available.
+6.2 WE DO NOT CLAIM TO LICENSE RIGHTSHOLDERS BY DEFAULT. Unless we publish a separate written license statement for a specific title or catalog, we do not claim to hold licenses from studios, labels, publishers, game studios, or other rightsholders for third-party works surfaced through the Service. Users must not treat PeteZah as a licensed storefront for film, TV, music, or commercial games.
 
-6.3 MOVIES, TV, ANIME STREAMING, AND SIMILAR AUDIOVISUAL CONTENT: Where the Service surfaces players, embeds, deep links, or indexes pointing to film/TV/anime or other audiovisual works, those works are typically hosted or streamed by THIRD PARTIES we do not control. We do not claim to license Hollywood studios, distributors, or other rightsholders for such titles. Availability is a technical conduit / discovery feature, not a warranty of lawful authorization in your location. If you are a rightsholder, use our DMCA Policy. Users must not treat the Service as a licensed movie storefront.
+6.3 MOVIES / TV / ANIME AND SIMILAR AUDIOVISUAL CONTENT — FACTUAL ARCHITECTURE.
+(a) PeteZah does not host or store the underlying audiovisual files for these third-party streams.
+(b) Metadata, artwork, and availability information may be obtained from third-party metadata services (including services such as The Movie Database / TMDB where used).
+(c) Playback content, if any, is supplied by separate third-party services. When you use an in-Service interface that requests such content, PeteZah provides a technical interface for requesting content from those third-party services through our browsing/proxy infrastructure.
+(d) PeteZah does not represent that third-party sources are licensed or authorized in every jurisdiction. Authorization, geography, and availability are determined by the third-party source and applicable law — not by a warranty from PeteZah.
+(e) These features are technical discovery / access tooling layered on a general-purpose browser/proxy product. They are not a claim that every third-party source is lawful where you live.
+(f) If you are a rightsholder, use our DMCA / Copyright Policy to identify the precise PeteZah UI references, catalog entries, or deep links under our control that you want investigated or disabled.
 
-6.4 We may remove, geo-restrict, or disable catalog items, embeds, or players when we receive valid notices or when we determine continued availability creates unacceptable legal risk — without admitting liability.
+6.4 MUSIC — FACTUAL ARCHITECTURE.
+(a) Music playback, where offered, is requested through third-party platforms (including SoundCloud and/or YouTube official embed or API surfaces where available). Track metadata may also come from third-party catalog APIs.
+(b) PeteZah does not operate as a music label and does not host a private library of commercial audio masters for the Music feature.
+(c) Licensing, monetization rules, geo-blocks, and takedowns for individual tracks are governed by those platforms and their agreements with rights holders and uploaders. Content remains on those platforms subject to their terms.
+(d) If a platform blocks, monetizes, or removes a track, PeteZah may be unable to play it.
 
-6.5 Virtual machine, remote browser, or sandboxed tools are experimental. Do not store secrets or illegal material in them.
+6.5 GAMES / HTML MODULES — FACTUAL ARCHITECTURE.
+(a) The games/library catalog may include: (i) modules we self-host or mirror under our operational control; (ii) embeds or deep links to third-party catalogs and publishers; and (iii) community or partner contributions (including catalogs historically associated with third-party HTML5 collections such as Selenite and embeds from partners such as CrazyGames), as credited in-product from time to time.
+(b) Brand names, characters, and assets inside individual titles generally belong to their respective owners. Catalog presence is not a claim that PeteZah owns those IP rights or that every title is authorized for every jurisdiction or institutional network.
+(c) For modules we host or control, valid DMCA notices may result in removal or disabling of the specific hosted item. For purely third-party destinations opened through proxy browsing, notices should also be directed to the destination operator.
+(d) We may remove, replace, or geo-restrict catalog entries when we receive valid notices or when we determine continued availability creates unacceptable legal or operational risk — without admitting liability.
+
+6.6 COMPLAINT HANDLING. We maintain a documented process for reviewing copyright complaints that identify material or references under our control. We investigate credible notices and may disable catalog entries, embeds, deep links, or hosted modules accordingly. See the DMCA / Copyright Policy. Pointing to a third-party provider does not replace our obligation to address references we control when a valid notice requires it.
+
+6.7 Virtual machine, remote browser, or sandboxed tools are experimental. Do not store secrets or illegal material in them.
 
 
 7. Advertising
@@ -205,6 +223,8 @@ This Policy covers data processed when you visit our sites, pass verification, c
 
 2.7 Communications: emails you send us; transactional emails we send you.
 
+2.8 Third-party media interfaces: when you use Music, Movies, or similar catalog features, we may send queries to third-party metadata or platform APIs (for example, music/platform search APIs, movie metadata services, or official embed endpoints). Those providers process the request under their own policies. PeteZah does not use those features to build a sold dossier of your private watch or listen history, but technical logs for reliability and abuse prevention may include related request metadata.
+
 
 3. How We Use Information
 
@@ -289,12 +309,18 @@ We respect intellectual property rights. Games, applications, artwork, audio, vi
 
 2. Role as Service Provider; Safe Harbor Intent
 
-Where applicable, we intend to operate consistent with the notice-and-takedown framework of the U.S. Digital Millennium Copyright Act, 17 U.S.C. § 512, and analogous laws. To the extent we qualify as a service provider, we will act expeditiously to remove or disable access to material that is the subject of a valid infringement notice.
+Where applicable, we intend to operate consistent with the notice-and-takedown framework of the U.S. Digital Millennium Copyright Act, 17 U.S.C. § 512, and analogous laws. Section 512 distinguishes among activities such as transitory communications, system caching, storage at a user's direction, and referring/linking users to online locations. Eligibility depends on the facts of the activity actually performed — not on Terms language alone.
+
+To the extent we qualify as a service provider for a given activity, we will act expeditiously to remove or disable access to material or references under our control that are the subject of a valid infringement notice.
+
+DESIGNATED AGENT: Our publicly listed DMCA contact is ${LEGAL_DMCA_EMAIL}. Service providers seeking certain § 512 protections must also designate an agent with the U.S. Copyright Office and keep that designation current. We treat public notice contact and Copyright Office registration as related compliance steps; questions about agent registration status may be sent to ${LEGAL_DMCA_EMAIL}.
 
 
 3. What This Policy Covers
 
-This Policy covers allegedly infringing material that we host or control (uploaded assets, mirrored files we store, user avatars, comments). It may also guide how we handle clear notices about embedded third-party players or deep links when removal on our side is technically feasible. We cannot control the entire public internet reachable through a proxy; for purely third-party sites you browse, send notices to that site's operator as well.
+This Policy covers allegedly infringing material that we host or control (for example: uploaded assets, mirrored files we store, self-hosted game modules under our control, user avatars, comments). It also covers how we handle clear notices about PeteZah UI references we control — including catalog entries, deep links, embeds, or technical interfaces that map a title to a third-party location — when disabling those references on our side is technically feasible.
+
+We cannot control the entire public internet reachable through a general-purpose proxy. For purely third-party sites you browse independently of a PeteZah catalog entry, send notices to that site's operator as well, and include any PeteZah-controlled URL if our UI specifically embeds or deep-links that destination.
 
 
 4. Filing a DMCA Takedown Notice
@@ -313,7 +339,7 @@ Email: ${LEGAL_DMCA_EMAIL}
 CC (optional): ${LEGAL_CONTACT_EMAIL}
 Subject line: DMCA Takedown Notice
 
-We aim to review complete notices within approximately 48–72 hours of receipt, excluding weekends/holidays, but timing is not guaranteed.
+We aim to review complete notices within approximately 48–72 hours of receipt, excluding weekends/holidays, but timing is not guaranteed. When a notice identifies a PeteZah-controlled catalog entry, embed, deep link, or hosted module, we investigate and may disable that reference or file even if the underlying bytes are stored only by a third party.
 
 
 5. Counter-Notification
@@ -336,14 +362,20 @@ Knowingly materially misrepresenting that material is infringing — or was remo
 For trademark, right-of-publicity, or similar complaints that are not pure DMCA copyright claims, email ${LEGAL_DMCA_EMAIL} with "IP Complaint" in the subject. We evaluate these in good faith but may require court orders for contested disputes.
 
 
-9. Games, Apps, Fan Content, and Audiovisual Media
+9. Games, Music, and Audiovisual Media — Architecture Notes for Notices
 
-Many titles in catalogs are third-party works. For film/TV/anime and similar audiovisual materials surfaced via third-party embeds or links, we typically do not host the underlying streams ourselves; valid notices should identify the precise URLs or UI locations on our Service that you want disabled. We may remove, geo-restrict, or replace items without admitting liability.
+9.1 AUDIOVISUAL (MOVIES / TV / ANIME). PeteZah does not host or store the underlying audiovisual files for third-party streams surfaced through the Movies feature. Metadata may come from third-party metadata services; playback, if any, is supplied by separate third-party services and may be requested through our browsing/proxy infrastructure. Valid notices should identify the precise PeteZah URLs, catalog titles, or UI locations you want disabled (for example, a specific title page or deep link under our control). We may remove, geo-restrict, or replace PeteZah-controlled references without admitting liability. Notices solely about bytes hosted only on a third-party origin should also be sent to that origin's operator.
+
+9.2 MUSIC. Music playback is requested through third-party platforms such as SoundCloud and/or YouTube (official embed/API surfaces where available). Licensing and availability for individual tracks are determined by those platforms and their rights holders. For tracks PeteZah does not host, include the PeteZah UI location if you want a catalog/search reference disabled, and notify the platform that hosts the audio as appropriate.
+
+9.3 GAMES / MODULES. The library may include self-hosted modules under our control and third-party embeds or catalog contributions (including partner/HTML5 collections credited in-product). For self-hosted or mirrored files we store, identify the direct URL or module id. For third-party destinations, identify any PeteZah catalog entry to disable and notify the destination operator for the underlying files.
+
+9.4 PROCESS. Complete notices are reviewed in good faith. We investigate references under our control, may disable catalog entries or hosted modules, and may ask for clarifying information. We do not rely on a blanket claim that we “do not know” the nature of every third-party source; instead we follow a notice-driven process for material and references we can disable.
 
 
 10. Proxy Browsing Disclaimer
 
-Browsing arbitrary third-party websites through a proxy does not make us the host of that website's content. Notices solely about destinations we do not store should be directed to the destination operator. If our UI specifically embeds or hosts a copy, include that URL in your notice.
+Browsing arbitrary third-party websites through a general-purpose proxy does not make us the host of that website's content. Notices solely about destinations we do not store should be directed to the destination operator. If our UI specifically embeds, deep-links, or catalogs a copy or stream reference, include that PeteZah URL in your notice.
 
 
 11. Fair Use and Other Defenses

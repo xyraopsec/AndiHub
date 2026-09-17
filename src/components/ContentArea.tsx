@@ -51,6 +51,7 @@ import { injectRivetIntoFrame, syncRivetTab } from "@/lib/rivet/host";
 import { requestSyncSoon } from "@/lib/settingsSync";
 import { openTrendingOverlay } from "@/lib/homeUrl";
 import { hrefs, isGHref, marks } from "@/lib/uiMarks";
+import { pathForTabUrl, trackSection } from "@/lib/lessonMetrics";
 import { GameLaunchSplash } from "@/components/GameLaunchSplash";
 import { introPending, markIntroSeen } from "@/lib/sessionIntro";
 
@@ -89,6 +90,14 @@ function TabPaneShell({
       <Suspense fallback={null}>{children}</Suspense>
     </div>
   );
+}
+
+function useSectionInsight(url: string, visible: boolean) {
+  useEffect(() => {
+    if (!visible) return;
+    const section = pathForTabUrl(url);
+    trackSection(section, { force: section === "lab" });
+  }, [url, visible]);
 }
 
 interface ContentAreaProps {
@@ -1310,6 +1319,8 @@ function TabPane({
   const displayUrl = isGameViewer ? hrefs.gv() : tab.url;
   const isAppViewer = tab.url.startsWith("petezah://appviewer");
 
+  useSectionInsight(tab.url, isVisible);
+
   if (isGameViewer) {
     const params = new URLSearchParams(tab.url.split("?")[1] || "");
     const gameUrl = params.get("url") || "";
@@ -1319,11 +1330,13 @@ function TabPane({
         ? tab.title
         : "") ||
       "";
+    const moduleId = params.get("gid") || "";
     return (
       <TabPaneShell visible={isVisible}>
         <GameViewerPage
           url={gameUrl}
           title={gameTitle}
+          moduleId={moduleId}
           onBack={() => onNavigate(hrefs.g())}
         />
       </TabPaneShell>

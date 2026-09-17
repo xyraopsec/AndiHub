@@ -21,17 +21,22 @@ export default function ObfuscatedText({
 }) {
   const needs = force || shouldObfuscateDisplay(children);
   const [text, setText] = useState(children);
+  const [sealed, setSealed] = useState(!needs);
 
   useEffect(() => {
     if (!needs) {
       setText(children);
+      setSealed(true);
       return;
     }
     let alive = true;
+    setSealed(false);
     loadFontMaps().then(() => {
       if (!alive) return;
       const { maps } = getFontMaps();
-      setText(maps ? obfuscateDisplayText(children, maps) : children);
+      if (maps) setText(obfuscateDisplayText(children, maps));
+      else setText(children);
+      setSealed(true);
     });
     return () => {
       alive = false;
@@ -40,8 +45,11 @@ export default function ObfuscatedText({
 
   return (
     <Tag
-      className={needs ? `ob-p${className ? ` ${className}` : ""}` : className}
-      style={style}
+      className={needs ? `t-ui${className ? ` ${className}` : ""}` : className}
+      style={{
+        ...style,
+        ...(needs && !sealed ? { color: "transparent", textShadow: "none" } : null),
+      }}
       data-no-obfuscate={needs ? "true" : undefined}
     >
       {text as ReactNode}

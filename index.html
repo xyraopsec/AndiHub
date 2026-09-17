@@ -49,11 +49,7 @@ If you want to make the website better, the repository is open source, and my dm
         }
         window.__pzEgMig = 1;
         window.__PZ_EG__ = g;
-        var old = String.fromCharCode(36, 115, 99, 114, 97, 109, 106, 101, 116);
-        var neu = String.fromCharCode(36, 100, 117, 115, 107, 108, 105, 110, 101);
         try {
-          indexedDB.deleteDatabase(old);
-          indexedDB.deleteDatabase(neu);
           indexedDB.deleteDatabase(String.fromCharCode(36, 118, 111, 108, 116, 101, 100, 103, 101));
         } catch (e) {}
         var jobs = [];
@@ -96,31 +92,6 @@ If you want to make the website better, the repository is open source, and my dm
         setTimeout(finish, 1200);
       })();
     </script>
-    <script>
-      !(function (e, t, a, n) {
-        ((e[n] = e[n] || []),
-          e[n].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }));
-        var g = t.getElementsByTagName(a)[0],
-          m = t.createElement(a);
-        ((m.async = !0),
-          (m.src = "https://www.googletagmanager.com/gtm.js?id=GTM-WPH7NCG4"),
-          g.parentNode.insertBefore(m, g));
-      })(window, document, "script", "dataLayer");
-    </script>
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-SHE360M0YP"
-    ></script>
-    <script>
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      ((window.dataLayer = window.dataLayer || []),
-        gtag("js", new Date()),
-        gtag("config", "G-SHE360M0YP"));
-    </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6640595376330309"
-    crossorigin="anonymous"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>HypeStudy</title>
@@ -189,6 +160,27 @@ If you want to make the website better, the repository is open source, and my dm
     <link rel="icon" type="image/png" sizes="16x16" href="/logo.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.png" />
     <link rel="manifest" href="/manifest.json" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHE360M0YP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-SHE360M0YP", { send_page_view: true, transport_type: "beacon" });
+    </script>
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-WPH7NCG4");
+    </script>
     <style>
       html, body {
         height: 100dvh;
@@ -218,9 +210,16 @@ If you want to make the website better, the repository is open source, and my dm
         display: none !important;
       }
     </style>
-    <script async type="application/javascript" src="https://a.magsrv.com/ad-provider.js"></script>
   </head>
   <body>
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-WPH7NCG4"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
     <div id="root"></div>
 
     <div class="education-is-key" aria-hidden="true">

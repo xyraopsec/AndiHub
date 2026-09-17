@@ -2,6 +2,7 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { generateChallenge, validateChallenge } from 'capjs-core';
 import { toIPv4 } from '../middleware/security.js';
+import { clearChallengeRequired } from '../middleware/challenge-risk.js';
 import {
   getCapSecret,
   consumeCapNonce,
@@ -26,7 +27,7 @@ router.post('/challenge', capLimiter, async (_req, res) => {
     cleanupCapStore();
     const ch = await generateChallenge(getCapSecret(), {
       scope: capScope(),
-      challengeCount: 32,
+      challengeCount: 24,
       challengeDifficulty: 4,
       expiresMs: 300000,
       instrumentation: {
@@ -66,6 +67,7 @@ router.post('/redeem', capLimiter, async (req, res) => {
 
     storeCapToken(result.tokenKey, result.expires);
     const gate = setGateCookie(res, req);
+    clearChallengeRequired(toIPv4(null, req));
     res.json({ success: true, token: result.token, expires: result.expires, gate });
   } catch (e) {
     console.error('[cap] redeem', e.message);

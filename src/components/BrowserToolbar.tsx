@@ -580,7 +580,7 @@ export default function Toolbar({
           ref={shieldBtnRef}
           type="button"
           className="p-1.5 rounded-lg hover:bg-white/5 transition-colors toolbar-hide-sm relative"
-          title="uBlock Origin"
+          title="Privacy filter"
           aria-expanded={shieldOpen}
           onClick={() => setShieldOpen((v) => !v)}
           style={{ color: shieldOn ? "hsla(145, 55%, 62%, 0.92)" : "hsla(0,0%,100%,0.55)" }}

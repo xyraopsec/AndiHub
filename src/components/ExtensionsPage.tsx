@@ -593,7 +593,7 @@ export default function ExtensionsPage({ onNavigate }: { onNavigate: (url: strin
           >
             <Info size={13} style={{ flexShrink: 0, marginTop: 1, color: S.accent }} />
             <span>
-              Chrome extensions (including real uBlock Origin) run inside Rivet runtime on web
+              Browser extensions (including a real privacy filter) run inside the tab runtime on web
               pages only. They are not installed on your Chromebook. Optional. Does not bypass school or employer
               policies.
             </span>
@@ -655,7 +655,7 @@ export default function ExtensionsPage({ onNavigate }: { onNavigate: (url: strin
                   ) : null}
                 </div>
                 <p style={{ margin: "3px 0 0", fontSize: 11, color: S.textSub, lineHeight: 1.4 }}>
-                  Chrome extension via Rivet · runs on proxied tabs
+                  Browser extension · runs on open tabs
                 </p>
               </div>
               <button

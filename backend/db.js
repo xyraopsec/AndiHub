@@ -285,8 +285,31 @@ try {
   if (!annCols.includes('target_user_id')) {
     db.exec('ALTER TABLE announcements ADD COLUMN target_user_id TEXT');
   }
+  if (!annCols.includes('target_ips')) {
+    db.exec('ALTER TABLE announcements ADD COLUMN target_ips TEXT');
+  }
 } catch (e) {
   console.error('announcements migration error:', e);
+}
+
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS notifications (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      kind TEXT NOT NULL,
+      actor_id TEXT,
+      ref_type TEXT NOT NULL,
+      ref_id TEXT NOT NULL,
+      body TEXT,
+      created_at INTEGER NOT NULL,
+      read INTEGER NOT NULL DEFAULT 0
+    );
+    CREATE INDEX IF NOT EXISTS idx_notifications_user_created ON notifications(user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications(user_id, read);
+  `);
+} catch (e) {
+  console.error('notifications migration error:', e);
 }
 
 try {

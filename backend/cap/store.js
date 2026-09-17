@@ -104,6 +104,13 @@ export function hasValidGate(req) {
   return verifyGateCookieValue(headerToken(req, 'x-pz-gate'));
 }
 
+export function clearGateCookie(res, req) {
+  res.cookie(GATE_COOKIE, '', {
+    ...crossSiteCookieFlags(req),
+    maxAge: 0,
+  });
+}
+
 export function setGateCookie(res, req) {
   const value = mintGateCookieValue();
   res.cookie(GATE_COOKIE, value, {

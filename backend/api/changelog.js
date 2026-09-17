@@ -33,6 +33,17 @@ export async function createChangelogHandler(req, res) {
   const id = randomUUID();
   const now = Date.now();
   db.prepare('INSERT INTO changelog (id, title, content, author_id, created_at) VALUES (?, ?, ?, ?, ?)').run(id, title, content, req.session.user.id, now);
+  try {
+    const { createMentionNotifications } = await import('../utils/mentions.js');
+    createMentionNotifications({
+      actorId: req.session.user.id,
+      title,
+      text: content,
+      refType: 'changelog',
+      refId: id,
+      preview: content,
+    });
+  } catch {}
   res.status(201).json({ message: 'Changelog entry created', id });
 }
 

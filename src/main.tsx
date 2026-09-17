@@ -5,13 +5,23 @@ import App from "./App";
 import "./index.css";
 import "./styles/studio-overrides.css";
 import { loadFontMaps } from "./lib/fontObfuscation";
-import { defaultBrandSrc, isHomeHost } from "./lib/uiMarks";
+import { defaultBrandSrc } from "./lib/uiMarks";
 import { themeById, applyBrowserIdentity } from "./lib/siteThemes";
 import { isLiteDevice } from "./lib/liteDevice";
 import { startCampusPulse } from "./lib/campusPulse";
 import { syncBgEffectAttr } from "./lib/bgEffects";
 import { ensureBuiltinExtensions } from "./components/ExtensionsPage";
+import { installQuietBoot, whenQuietEnds } from "./lib/quietBoot";
+import { installTraceSeal } from "./lib/traceSeal";
+import { installLessonMetrics, trackSection } from "./lib/lessonMetrics";
 import "./styles/rivet.css";
+
+installQuietBoot();
+installLessonMetrics();
+trackSection("home", { page_title: "Campus Home" });
+whenQuietEnds(() => {
+  installTraceSeal();
+});
 
 const lite = isLiteDevice();
 if (lite) {
@@ -20,6 +30,7 @@ if (lite) {
 if (/CrOS/.test(navigator.userAgent)) {
   document.documentElement.classList.add("chromeos");
 }
+
 if (!lite) {
   const fontObf = document.createElement("script");
   fontObf.src = "/font-obfuscation.js";
@@ -30,6 +41,24 @@ if (!lite) {
     document.fonts.load("600 16px plusjakartasans-obf").catch(() => {});
   }
 }
+
+whenQuietEnds(() => {
+  const inject = (src: string, attrs?: Record<string, string>) => {
+    if (document.querySelector(`script[data-pz-deferred="${src}"]`)) return;
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = src;
+    s.dataset.pzDeferred = src;
+    if (attrs) {
+      for (const [k, v] of Object.entries(attrs)) s.setAttribute(k, v);
+    }
+    document.head.appendChild(s);
+  };
+  inject("https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6640595376330309", {
+    crossorigin: "anonymous",
+  });
+  inject("https://a.magsrv.com/ad-provider.js");
+});
 
 function applyStoredSettings() {
   const get = (k: string) => localStorage.getItem(k);
@@ -43,10 +72,6 @@ function applyStoredSettings() {
   const siteTitle = get("siteTitle");
   if (siteTitle) {
     document.title = siteTitle;
-  } else {
-    setTimeout(() => {
-      document.title = "AndiHub";
-    }, 3000);
   }
 
   const siteLogo = get("siteLogo");
@@ -224,7 +249,9 @@ function cloakInPopup(iframeSrc: string, mode: string): boolean {
   }
 }
 
-startCampusPulse();
+whenQuietEnds(() => {
+  startCampusPulse();
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, Heart, Trash2, Send, Loader2, Lock } from "lucide-react";
 import { setPendingAuth } from "@/lib/authPending";
+import { MentionsText } from "@/lib/mentions";
 
 interface Entry { id: string; content: string; username?: string; user_id: string; created_at: number; }
 interface Comment { id: string; content: string; username?: string; avatar_url?: string; created_at: number; user_id?: string; }
@@ -267,8 +268,8 @@ export default function FeedbackPage({ onNavigate }: { onNavigate: (url: string)
                         <p className="text-[10px] mt-0.5" style={{ color: "hsl(220 15% 32%)" }}>{timeAgo(entry.created_at)}</p>
                       </div>
                     </div>
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "hsl(220 15% 70%)" }}>
-                      {entry.content}
+                    <p className="text-sm leading-relaxed" style={{ color: "hsl(220 15% 70%)" }}>
+                      <MentionsText text={entry.content} onNavigate={onNavigate} />
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-shrink-0 pt-0.5">
@@ -321,7 +322,7 @@ export default function FeedbackPage({ onNavigate }: { onNavigate: (url: string)
                               >
                                 {c.username || "User"}
                               </button>
-                              <span className="text-[11px]" style={{ color: "hsl(220 15% 62%)" }}>{c.content}</span>
+                              <MentionsText text={c.content} onNavigate={onNavigate} style={{ fontSize: 11, color: "hsl(220 15% 62%)" }} />
                             </div>
                             {isAdmin && (
                               <button onClick={() => deleteComment(c.id)}
@@ -339,7 +340,7 @@ export default function FeedbackPage({ onNavigate }: { onNavigate: (url: string)
                       <div className="flex gap-2 items-center">
                         <input value={newComment} onChange={e => setNewComment(e.target.value)}
                           onKeyDown={e => { if (e.key === "Enter") postComment(); }}
-                          placeholder="Add a comment..."
+                          placeholder="Add a comment… @username to mention"
                           className="flex-1 text-[11px] px-2.5 py-1.5 rounded-lg outline-none"
                           style={{ background: "hsl(220 25% 9%)", border: "1px solid hsl(220 18% 15%)", color: "hsl(220 15% 88%)", fontFamily: "inherit" }} />
                         <button onClick={postComment} disabled={commentPosting || !newComment.trim()}

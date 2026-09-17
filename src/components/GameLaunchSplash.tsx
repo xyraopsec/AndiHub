@@ -185,7 +185,7 @@ export function GameLaunchSplash({
               {title?.trim() || hrefs.wordG()}
             </p>
             <p style={{ margin: "6px 0 0", fontSize: 11, color: "hsla(210,14%,70%,0.72)" }}>
-              Warming up AndiHub
+              Getting things ready
             </p>
           </div>
         </div>
@@ -206,7 +206,7 @@ export function GameLaunchSplash({
               fontFamily: "inherit",
             }}
           >
-            Enter game
+            Continue
           </button>
         </div>
       </div>

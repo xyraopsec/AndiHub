@@ -20,10 +20,12 @@ import { armPx } from "@/lib/browserInit";
 import { applyMuxForUrl, unwrapPlayUrl } from "@/lib/proxyTarget";
 import { hrefs } from "@/lib/uiMarks";
 import { mutePollMs } from "@/lib/liteDevice";
+import { trackModuleEngage, trackSection } from "@/lib/lessonMetrics";
 
 interface GameViewerPageProps {
   url: string;
   title?: string;
+  moduleId?: string;
   onBack?: () => void;
 }
 
@@ -155,6 +157,7 @@ function applyMuteToFrame(iframe: HTMLIFrameElement | null, muted: boolean) {
 export default function GameViewerPage({
   url,
   title,
+  moduleId,
   onBack,
 }: GameViewerPageProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -162,11 +165,24 @@ export default function GameViewerPage({
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const zoomRef = useRef(1);
+  const startedAt = useRef(Date.now());
   const [zoom, setZoom] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [muted, setMuted] = useState(false);
   const { unlocked, phase, finishLoading, hadAd } = useInterstitialUnlock("game");
+
+  useEffect(() => {
+    trackSection("lab", {
+      page_title: `Lab · ${(title || "Module").slice(0, 48)}`,
+      module_id: moduleId || "unknown",
+      force: true,
+    });
+    startedAt.current = Date.now();
+    return () => {
+      trackModuleEngage(moduleId || "unknown", (Date.now() - startedAt.current) / 1000);
+    };
+  }, [moduleId, title, url]);
   const canPreload = phase === "ad" || phase === "loading" || phase === "ready";
   const playUrl = unwrapPlayUrl(url);
   const useProxy = !isLocalGamePath(playUrl) && needsRemoteFrame(playUrl);

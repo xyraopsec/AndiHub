@@ -12,7 +12,15 @@ const KEYWORDS = revealCodes([
   99, 106, 96, 120, 99, 100, 116, 98, 126, 121, 121, 113, 99, 106, 96, 122, 117, 122, 122, 119, 124,
   115, 113, 104, 98, 120, 119, 120, 120, 117, 126, 113, 101, 106, 119, 109, 103, 119, 102, 103, 107,
   99, 123, 118, 123, 121, 118, 127, 107, 112, 124, 120, 99, 115, 103, 104, 112, 119, 120, 125, 121,
-  113, 105, 117, 101, 117, 116, 112, 114,
+  113, 105, 117, 101, 117, 116, 112, 114, 106, 120, 123, 97, 127, 112, 103, 107, 123, 122, 98, 126,
+  115, 105, 121, 98, 101, 124, 119, 107, 97, 124, 103, 103, 106, 123, 123, 96, 113, 114, 104, 101,
+  121, 119, 120, 120, 110, 105, 119, 123, 121, 116, 127, 126, 120, 114, 104, 97, 121, 121, 96, 114,
+  114, 114, 113, 107, 100, 124, 98, 114, 98, 105, 97, 117, 122, 122, 119, 124, 106, 118, 120, 126,
+  102, 56, 121, 98, 110, 105, 122, 114, 98, 118, 97, 101, 122, 105, 118, 118, 100, 112, 57, 122, 99,
+  109, 104, 114, 102, 122, 108, 110, 106, 121, 125, 117, 117, 96, 102, 123, 106, 98, 117, 101, 123,
+  124, 122, 112, 106, 112, 122, 99, 115, 103, 52, 112, 119, 120, 113, 107, 97, 116, 102, 122, 54, 96,
+  100, 107, 116, 116, 102, 114, 123, 96, 108, 107, 101, 118, 102, 118, 123, 105, 112, 98, 101, 126,
+  120, 126, 120, 112,
 ]).split("|");
 
 const EXCLUDE =
@@ -21,6 +29,8 @@ const EXCLUDE =
 let maps = null;
 let reverse = null;
 let ready = false;
+let moPending = false;
+let moTimer = null;
 
 function shouldObfuscateText(text) {
   if (!text || !text.trim()) return false;
@@ -65,7 +75,7 @@ function excluded(el) {
 
 function mark(el) {
   if (!el || excluded(el)) return;
-  el.classList.add("ob-p");
+  el.classList.add("t-ui");
   try {
     el.style.setProperty("font-family", "plusjakartasans-obf, sans-serif", "important");
     el.style.setProperty("font-synthesis", "none", "important");
@@ -112,7 +122,7 @@ function processElement(root) {
     const nodes = [];
     let n;
     while ((n = walker.nextNode())) nodes.push(n);
-    nodes.forEach(processTextNode);
+    for (let i = 0; i < nodes.length; i++) processTextNode(nodes[i]);
   }
 
   ["placeholder", "alt"].forEach((attr) => {
@@ -131,7 +141,20 @@ function processElement(root) {
 function sweep() {
   if (!ready || !document.body) return;
   processElement(document.body);
-  document.body.classList.add("font-obfuscation-ready");
+}
+
+function scheduleSweep() {
+  if (moPending) return;
+  moPending = true;
+  const run = () => {
+    moPending = false;
+    sweep();
+  };
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(run, { timeout: 900 });
+  } else {
+    moTimer = setTimeout(run, 180);
+  }
 }
 
 function setupClipboard() {
@@ -171,24 +194,15 @@ async function boot() {
   }
 
   setupClipboard();
-  sweep();
-  setTimeout(sweep, 250);
-  setTimeout(sweep, 1000);
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(() => sweep(), { timeout: 400 });
+  } else {
+    setTimeout(sweep, 40);
+  }
+  setTimeout(scheduleSweep, 400);
 
-  if (typeof MutationObserver !== "undefined") {
-    const mo = new MutationObserver((muts) => {
-      for (const mut of muts) {
-        if (mut.type === "characterData" && mut.target?.parentElement) {
-          const p = mut.target.parentElement;
-          if (p.tagName === "TITLE" || p.closest?.("head")) continue;
-          processTextNode(mut.target);
-        }
-        mut.addedNodes?.forEach((node) => {
-          if (node.nodeType === 1 && (node.tagName === "TITLE" || node.closest?.("head"))) return;
-          if (node.nodeType === 1 || node.nodeType === 3) processElement(node);
-        });
-      }
-    });
+  if (typeof MutationObserver !== "undefined" && document.body) {
+    const mo = new MutationObserver(() => scheduleSweep());
     mo.observe(document.body, {
       childList: true,
       subtree: true,

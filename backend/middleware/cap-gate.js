@@ -2,9 +2,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import { hasValidGate } from '../cap/store.js';
-import { hasValidLegal } from '../legal/cookie.js';
 import { applySeoToHtml } from '../utils/seo-meta.js';
 import { isSocialPreviewBot } from './security.js';
+import { needsCaptchaChallenge } from './challenge-risk.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const VERIFY_FILE = path.join(__dirname, '../../public/verify.html');
@@ -50,14 +50,21 @@ const OPEN_EXACT = new Set([
   '/dmca',
   '/copyright',
   '/4f66ddd48bf4ee436b4ca095a86f40ff.html',
+  '/api/websocket/normal',
+  '/api/websocket/normal/',
+  '/api/websocket/tor',
+  '/api/websocket/tor/',
+  '/api/announcements/active',
 ]);
 
 const OPEN_PREFIX = ['/cap/', '/api/verify-email', '/api/legal', '/api/study/', '/api/flashcards/', '/api/quiz/', '/vendor/', '/fonts/', '/fx/', '/storage/ag/', '/b/', '/f/__rivet__/'];
 
 function isOpenPath(p) {
   if (OPEN_EXACT.has(p)) return true;
-  // Game asset folders (with or without trailing slash)
   if (p === '/storage/ag' || p.startsWith('/storage/ag/')) return true;
+  if (p === '/api/websocket/normal' || p.startsWith('/api/websocket/normal/')) return true;
+  if (p === '/api/websocket/tor' || p.startsWith('/api/websocket/tor/')) return true;
+  if (p === '/api/announcements/active') return true;
   for (const pre of OPEN_PREFIX) {
     if (p === pre.slice(0, -1) || p.startsWith(pre)) return true;
   }
@@ -79,29 +86,32 @@ function shouldBypassGateForCrawler(req) {
   return false;
 }
 
+function denyCaptcha(req, res) {
+  if (req.path?.startsWith('/api/') || req.path?.startsWith('/n/m/') || req.path?.startsWith('/f/g/') || req.path?.startsWith('/!!/') || req.path?.startsWith('/!cover!/') || req.path?.startsWith('/f/c/')) {
+    return res.status(403).json({ error: 'Verification required', code: 'CAPTCHA_REQUIRED' });
+  }
+  if (req.path?.startsWith('/assets/') || req.path?.endsWith('.js') || req.path?.endsWith('.css') || req.path?.endsWith('.map') || req.path?.endsWith('.woff2') || req.path?.endsWith('.woff') || req.path?.endsWith('.ttf')) {
+    return false;
+  }
+  res.setHeader('Cache-Control', 'no-store');
+  return res.redirect(302, '/verify?reason=activity');
+}
+
 export function createCapGateMiddleware() {
   return (req, res, next) => {
     const p = req.path || '';
     if (isOpenPath(p)) return next();
     if (shouldBypassGateForCrawler(req)) return next();
-    if (hasValidGate(req) && hasValidLegal(req)) return next();
     if (hasValidGate(req)) return next();
-
-    if (p.startsWith('/api/') || p.startsWith('/n/m/') || p.startsWith('/f/g/') || p.startsWith('/!!/') || p.startsWith('/!cover!/') || p.startsWith('/f/c/')) {
-      return res.status(403).json({ error: 'Verification required' });
-    }
+    if (!needsCaptchaChallenge(req)) return next();
 
     if (p.startsWith('/assets/') || p.endsWith('.js') || p.endsWith('.css') || p.endsWith('.map') || p.endsWith('.woff2') || p.endsWith('.woff') || p.endsWith('.ttf')) {
       return next();
     }
 
-    if (wantsHtml(req)) {
-      res.setHeader('Cache-Control', 'no-store');
-      return res.redirect(302, '/verify');
-    }
-
-    res.setHeader('Cache-Control', 'no-store');
-    return res.redirect(302, '/verify');
+    const denied = denyCaptcha(req, res);
+    if (denied === false) return next();
+    return denied;
   };
 }
 
@@ -117,5 +127,6 @@ export function sendVerifyPage(req, res) {
 }
 
 export function requireGateUpgrade(req) {
-  return hasValidGate(req);
+  if (hasValidGate(req)) return true;
+  return !needsCaptchaChallenge(req);
 }

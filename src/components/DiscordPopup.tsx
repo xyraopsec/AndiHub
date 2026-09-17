@@ -12,6 +12,7 @@ export default function DiscordPopup() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
+    let timer: number | undefined;
     let firstSeen = false;
     try {
       firstSeen = localStorage.getItem(SEEN_KEY) === "1";
@@ -41,13 +42,16 @@ export default function DiscordPopup() {
     }
     if (Date.now() - last < COOLDOWN_MS) return;
 
-    const timer = window.setTimeout(() => {
+    timer = window.setTimeout(() => {
       setShow(true);
       try {
         localStorage.setItem(LAST_KEY, String(Date.now()));
       } catch {}
-    }, 900);
-    return () => window.clearTimeout(timer);
+    }, 2500);
+
+    return () => {
+      if (timer) window.clearTimeout(timer);
+    };
   }, []);
 
   const dismiss = () => {

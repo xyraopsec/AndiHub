@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Shield } from "lucide-react";
 
 export default function LegalReagreeModal() {
   const [open, setOpen] = useState(false);
@@ -15,7 +17,7 @@ export default function LegalReagreeModal() {
         const d = await r.json();
         if (gone) return;
         setVersion(d.version || null);
-        if (d.gate && !d.accepted) setOpen(true);
+        if (!d.accepted) setOpen(true);
       } catch {}
     })();
     return () => {
@@ -23,10 +25,12 @@ export default function LegalReagreeModal() {
     };
   }, []);
 
-  if (!open) return null;
-
   async function accept() {
-    if (busy || !agreed) return;
+    if (busy) return;
+    if (!agreed) {
+      setError("Please check the box to continue.");
+      return;
+    }
     setBusy(true);
     setError("");
     try {
@@ -38,6 +42,11 @@ export default function LegalReagreeModal() {
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) {
+        if (d?.code === "CAPTCHA_REQUIRED" || /verif/i.test(String(d?.error || ""))) {
+          try {
+            window.__pzNeedCaptcha?.();
+          } catch {}
+        }
         setError(d.error || "Could not save. Try again.");
         setBusy(false);
         return;
@@ -50,215 +59,177 @@ export default function LegalReagreeModal() {
   }
 
   return (
-    <div className="pz-legal-reagree" role="dialog" aria-modal="true" aria-labelledby="pz-legal-reagree-title">
-      <style>{`
-        .pz-legal-reagree {
-          position: fixed;
-          inset: 0;
-          z-index: 100000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px 18px;
-          background:
-            radial-gradient(ellipse 80% 60% at 50% 0%, hsla(213, 55%, 28%, 0.28), transparent 55%),
-            hsla(220, 40%, 4%, 0.78);
-          backdrop-filter: blur(14px) saturate(1.1);
-          -webkit-backdrop-filter: blur(14px) saturate(1.1);
-          font-family: "Segoe UI", ui-sans-serif, system-ui, -apple-system, sans-serif;
-          color: hsl(0 0% 98%);
-          -webkit-font-smoothing: antialiased;
-        }
-        .pz-legal-reagree .card {
-          position: relative;
-          width: 100%;
-          max-width: 440px;
-          border-radius: 18px;
-          border: 1px solid hsl(213 40% 32% / 0.55);
-          background:
-            linear-gradient(165deg, hsl(216 28% 12% / 0.96), hsl(220 32% 8% / 0.98));
-          box-shadow:
-            0 28px 80px rgba(0,0,0,0.55),
-            inset 0 1px 0 hsla(0,0%,100%,0.06);
-          padding: 26px 24px 20px;
-          overflow: hidden;
-        }
-        .pz-legal-reagree .card::before {
-          content: "";
-          position: absolute;
-          inset: 0 0 auto 0;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, hsl(213 70% 58% / 0.45), transparent);
-          pointer-events: none;
-        }
-        .pz-legal-reagree .icon {
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          margin-bottom: 16px;
-          display: grid;
-          place-items: center;
-          background: hsl(216 30% 10%);
-          border: 1px solid hsl(213 40% 32%);
-          color: hsl(213 80% 80%);
-        }
-        .pz-legal-reagree .eyebrow {
-          margin: 0 0 8px;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: hsl(213 75% 68%);
-        }
-        .pz-legal-reagree h2 {
-          margin: 0 0 10px;
-          font-size: clamp(1.35rem, 3.5vw, 1.55rem);
-          font-weight: 750;
-          letter-spacing: -0.03em;
-          line-height: 1.2;
-        }
-        .pz-legal-reagree .sub {
-          margin: 0 0 18px;
-          font-size: 0.9rem;
-          line-height: 1.55;
-          color: hsl(216 15% 72%);
-        }
-        .pz-legal-reagree .version {
-          display: block;
-          margin-top: 8px;
-          font-size: 11px;
-          color: hsl(216 15% 52%);
-        }
-        .pz-legal-reagree .agree {
-          display: flex;
-          align-items: flex-start;
-          gap: 10px;
-          text-align: left;
-          margin: 0 0 16px;
-          cursor: pointer;
-          user-select: none;
-        }
-        .pz-legal-reagree .agree input {
-          position: absolute;
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-        .pz-legal-reagree .tick {
-          width: 18px;
-          height: 18px;
-          margin-top: 1px;
-          flex-shrink: 0;
-          border-radius: 5px;
-          border: 1px solid hsl(213 40% 34%);
-          background: hsl(216 30% 10%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.15s, border-color 0.15s;
-        }
-        .pz-legal-reagree .tick svg {
-          width: 11px;
-          height: 11px;
-          opacity: 0;
-          transform: scale(0.7);
-          transition: opacity 0.12s, transform 0.12s;
-          color: #fff;
-        }
-        .pz-legal-reagree .agree input:checked + .tick {
-          background: hsl(213 55% 32%);
-          border-color: hsl(213 45% 42%);
-        }
-        .pz-legal-reagree .agree input:checked + .tick svg {
-          opacity: 1;
-          transform: scale(1);
-        }
-        .pz-legal-reagree .agree input:focus-visible + .tick {
-          outline: 2px solid hsla(213, 70%, 58%, 0.55);
-          outline-offset: 2px;
-        }
-        .pz-legal-reagree .agree-text {
-          font-size: 0.78rem;
-          line-height: 1.45;
-          color: hsl(216 15% 68%);
-        }
-        .pz-legal-reagree .agree-text a {
-          color: hsl(213 75% 68%);
-          text-decoration: none;
-        }
-        .pz-legal-reagree .agree-text a:hover {
-          text-decoration: underline;
-        }
-        .pz-legal-reagree .error {
-          margin: 0 0 12px;
-          font-size: 12px;
-          color: #f0a0a8;
-        }
-        .pz-legal-reagree .continue {
-          appearance: none;
-          width: 100%;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 12px 28px;
-          border-radius: 12px;
-          border: 1px solid hsl(213 45% 42%);
-          background: hsl(213 55% 32%);
-          color: #fff;
-          font-size: 0.9rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: opacity 0.15s, filter 0.15s;
-        }
-        .pz-legal-reagree .continue:disabled {
-          opacity: 0.45;
-          cursor: not-allowed;
-        }
-        .pz-legal-reagree .continue:not(:disabled):hover {
-          filter: brightness(1.08);
-        }
-      `}</style>
-      <div className="card">
-        <div className="icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          </svg>
-        </div>
-        <p className="eyebrow">Policy update</p>
-        <h2 id="pz-legal-reagree-title">Our policies changed</h2>
-        <p className="sub">
-          You&apos;re still verified — no captcha needed. Please review and re-agree to continue.
-          {version ? <span className="version">Document version {version}</span> : null}
-        </p>
-        <label className="agree">
-          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
-          <span className="tick" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </span>
-          <span className="agree-text">
-            I agree to the updated{" "}
-            <a href="/terms" target="_blank" rel="noopener noreferrer">
-              Terms
-            </a>
-            ,{" "}
-            <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
-              Privacy Policy
-            </a>
-            , and{" "}
-            <a href="/dmca" target="_blank" rel="noopener noreferrer">
-              DMCA Policy
-            </a>
-            .
-          </span>
-        </label>
-        {error ? <p className="error">{error}</p> : null}
-        <button type="button" className="continue" disabled={!agreed || busy} onClick={() => void accept()}>
-          {busy ? "Saving…" : "Agree and continue"}
-        </button>
-      </div>
-    </div>
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100000] flex items-center justify-center p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pz-legal-reagree-title"
+        >
+          <div
+            className="absolute inset-0"
+            style={{ background: "hsla(220, 40%, 4%, 0.72)", backdropFilter: "blur(10px)" }}
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 14, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.99 }}
+            transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative z-10 w-full max-w-sm flex flex-col items-center text-center"
+            style={{ pointerEvents: "auto" }}
+          >
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+              style={{
+                background: "hsl(216 30% 10%)",
+                border: "1px solid hsl(213 40% 32%)",
+              }}
+            >
+              <Shield size={22} style={{ color: "hsl(213 80% 78%)" }} />
+            </div>
+
+            <p
+              className="text-[10px] font-bold uppercase tracking-[0.16em] mb-2"
+              style={{ color: "hsl(213 75% 68%)" }}
+            >
+              Policy update
+            </p>
+            <h2
+              id="pz-legal-reagree-title"
+              className="text-2xl font-extrabold tracking-tight mb-2"
+              style={{ color: "hsl(0 0% 100%)" }}
+            >
+              Our policies changed
+            </h2>
+            <p
+              className="text-sm leading-relaxed mb-5 max-w-[32ch]"
+              style={{ color: "hsl(216 15% 72%)" }}
+            >
+              Please review and agree to continue.
+              {version ? (
+                <span className="block mt-2 text-[11px]" style={{ color: "hsl(216 15% 52%)" }}>
+                  Document version {version}
+                </span>
+              ) : null}
+            </p>
+
+            <label
+              className="flex items-start gap-2.5 text-left w-full max-w-[280px] mb-3 cursor-pointer select-none"
+            >
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={agreed}
+                onChange={(e) => {
+                  setAgreed(e.target.checked);
+                  if (e.target.checked) setError("");
+                }}
+              />
+              <span
+                aria-hidden="true"
+                className="mt-0.5 shrink-0 flex items-center justify-center transition-colors"
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 6,
+                  border: agreed
+                    ? "2px solid hsl(213 75% 68%)"
+                    : "2px solid hsl(213 55% 55%)",
+                  background: agreed ? "hsl(213 55% 36%)" : "hsla(216, 30%, 10%, 0.9)",
+                  boxShadow: "0 0 0 1px hsla(213, 40%, 20%, 0.7)",
+                }}
+              >
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="white"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    opacity: agreed ? 1 : 0,
+                    transform: agreed ? "scale(1)" : "scale(0.7)",
+                    transition: "opacity 0.12s, transform 0.12s",
+                  }}
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+              <span className="text-[12px] leading-snug" style={{ color: "hsl(216 15% 68%)" }}>
+                I agree to the updated{" "}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-2 hover:underline"
+                  style={{ color: "hsl(213 75% 68%)" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Terms
+                </a>
+                ,{" "}
+                <a
+                  href="/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-2 hover:underline"
+                  style={{ color: "hsl(213 75% 68%)" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Privacy Policy
+                </a>
+                , and{" "}
+                <a
+                  href="/dmca"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-2 hover:underline"
+                  style={{ color: "hsl(213 75% 68%)" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  DMCA Policy
+                </a>
+                .
+              </span>
+            </label>
+
+            {error ? (
+              <p className="text-xs mb-3 w-full max-w-[280px] text-left" style={{ color: "#f0a0a8" }}>
+                {error}
+              </p>
+            ) : null}
+
+            <div className="flex flex-col gap-2.5 w-full max-w-[280px]">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void accept()}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-[filter,opacity]"
+                style={{
+                  background: "hsl(213 55% 36%)",
+                  border: "1px solid hsl(213 50% 48%)",
+                  opacity: busy ? 0.55 : 1,
+                  cursor: busy ? "not-allowed" : "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (!busy) e.currentTarget.style.filter = "brightness(1.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.filter = "none";
+                }}
+              >
+                {busy ? "Saving…" : "Agree and continue"}
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }

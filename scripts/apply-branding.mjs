@@ -59,9 +59,8 @@ rule("package.json", `"name": "petezah"`, `"name": "{{packageName}}"`);
 rule("package.json", `"author": "PeteZah"`, `"author": "{{author}}"`);
 rule("package.json", "Report questions to https://discord.gg/cYjHFDguxS.", "Report questions to {{discordInvite}}.");
 
-// ── client title (always AndiHub; EDU cloak identity retired on the fork) ──
-rule("src/main.tsx", `document.title = isHomeHost() ? "AndiHub" : "HypeStudy";`, `document.title = "{{brand}}";`);
-rule("src/main.tsx", `document.title = isHomeHost() ? "PeteZah" : "HypeStudy";`, `document.title = "{{brand}}";`);
+// NOTE: upstream removed the default title fallback (2026-09-16) — the tab
+// title now comes from server-injected SEO meta, which is branded above.
 
 // ── wordmarks ────────────────────────────────────────────────
 rule("src/components/BrowserSidebar.tsx", "PeteZah\r\n            </ObfuscatedText>", "{{brand}}\r\n            </ObfuscatedText>");
@@ -166,8 +165,8 @@ rule("src/components/FirefoxVmPage.tsx", "PeteZah VM", "{{brand}} VM");
 rule("src/components/FirefoxVmPage.tsx", "a real Gecko browser inside PeteZah.", "a real Gecko browser inside {{brand}}.");
 rule("src/components/FirefoxVmPage.tsx", "PeteZah VMs", "{{brand}} VMs");
 rule("src/components/FirefoxVmPage.tsx", "Use Exit on the VM splash to return to PeteZah", "Use Exit on the VM splash to return to {{brand}}");
-rule("src/components/GameLaunchSplash.tsx", "Warming up PeteZah", "Warming up {{brand}}");
-rule("src/components/InterstitialAdGate.tsx", "thanks for supporting PeteZah", "thanks for supporting {{brand}}");
+// NOTE: upstream replaced the GameLaunchSplash + InterstitialAdGate brand lines
+// with brand-neutral copy (2026-09-16) — no rules needed.
 rule("src/components/SharedAiPage.tsx", "Open PeteZah", "Open {{brand}}");
 rule("src/components/SvgAccessGate.tsx", `<p className="eyebrow">PeteZah</p>`, `<p className="eyebrow">{{brand}}</p>`);
 rule("src/components/SvgAccessGate.tsx", "Secure access · PeteZah", "Secure access · {{brand}}");

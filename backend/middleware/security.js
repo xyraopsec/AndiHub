@@ -129,6 +129,11 @@ export function createFingerprint(req) {
   return createHash('sha256').update(data).digest('hex').slice(0, 32);
 }
 
+export function getIPReputationScore(ip) {
+  const current = ipReputation.get(ip);
+  return current ? current.score : 0;
+}
+
 export function updateIPReputation(ip, score) {
   const current = ipReputation.get(ip) || { score: 0, lastSeen: 0, violations: [] };
   current.score += score;
@@ -138,7 +143,7 @@ export function updateIPReputation(ip, score) {
     if (current.violations.length > 50) current.violations.shift();
   }
   ipReputation.set(ip, current);
-  if (current.score < -100) {
+  if (current.score < -250) {
     circuitBreakers.set(ip, { open: true, until: Date.now() + 3600000, violations: current.violations.length });
   }
 }
@@ -279,7 +284,7 @@ export function adjustPowDifficulty(shield) {
   else if (target < systemState.currentPowDifficulty) systemState.currentPowDifficulty = Math.max(systemState.currentPowDifficulty - 1, BASE_POW_DIFFICULTY);
 }
 
-const BOT_PATTERNS = [/googlebot/i, /bingbot/i, /slurp/i, /duckduckbot/i, /baiduspider/i, /yandexbot/i, /facebookexternalhit/i, /facebot/i, /meta-externalagent/i, /meta-externalfetcher/i, /twitterbot/i, /discordbot/i, /telegrambot/i, /whatsapp/i, /linkedinbot/i, /slackbot/i, /archive\.org_bot/i, /ia_archiver/i, /semrushbot/i, /ahrefsbot/i, /mj12bot/i, /dotbot/i];
+const BOT_PATTERNS = [/googlebot/i, /bingbot/i, /slurp/i, /duckduckbot/i, /baiduspider/i, /yandexbot/i, /facebookexternalhit/i, /facebot/i, /meta-externalagent/i, /meta-externalfetcher/i, /twitterbot/i, /discordbot/i, /telegrambot/i, /whatsapp/i, /linkedinbot/i, /slackbot/i, /archive\.org_bot/i, /ia_archiver/i, /semrushbot/i, /ahrefsbot/i, /mj12bot/i, /dotbot/i, /bytespider/i, /petalbot/i, /gptbot/i, /claudebot/i, /ccbot/i, /anthropic-ai/i, /dataforseo/i, /serpstat/i, /screaming frog/i, /nutch/i, /seokicks/i];
 
 const OPEN_PATHS = new Set(['/api/signin', '/api/signup', '/api/bot-challenge', '/api/bot-verify', '/api/verify-email', '/api/verify-email/resend', '/api/legal/accept', '/api/legal/status', '/api/me', '/api/signout', '/api/comments', '/api/likes', '/api/changelog', '/api/presence', '/api/announcements/active', '/api/games/play', '/api/games/plays', '/api/games/catalog', '/api/websocket/normal', '/api/websocket/normal/', '/api/websocket/tor', '/api/websocket/tor/']);
 
@@ -302,6 +307,12 @@ export function createGateMiddleware(shield) {
     systemState.totalRequests++;
     const ip = toIPv4(null, req);
     const ua = req.headers['user-agent'] || '';
+    const pathOnly = String(req.url || req.originalUrl || '').split('?')[0];
+    const isWsAuth =
+      pathOnly === '/api/websocket/normal' ||
+      pathOnly === '/api/websocket/normal/' ||
+      pathOnly === '/api/websocket/tor' ||
+      pathOnly === '/api/websocket/tor/';
 
     if (shield?.isKillSwitchActive?.() && !isKillSwitchExempt(req)) {
       shield.incrementBlocked(ip, 'kill_switch');
@@ -313,13 +324,13 @@ export function createGateMiddleware(shield) {
       return res.status(429).json({ error: 'Too many requests' });
     }
 
+    if (isWsAuth) return next();
+
     const botMatch = BOT_PATTERNS.find(p => p.test(ua));
     if (botMatch) {
-      // Share-preview crawlers often fail reverse-DNS; still let them read OG tags.
       if (isSocialPreviewBot(ua)) return next();
       const verified = await verifyLegitimateBot(ua, ip);
       if (!verified) { shield.incrementBlocked(ip, 'fake_bot'); return res.status(403).json({ error: 'Forbidden' }); }
-      // Mark so cap-gate can skip the /verify wall for real crawlers.
       req.pzVerifiedBot = true;
       return next();
     }
@@ -342,6 +353,8 @@ export function isKillSwitchExempt(req) {
   if (pathOnly === '/api/me') return true;
   if (pathOnly === '/api/signout' || pathOnly === '/api/signin') return true;
   if (pathOnly.startsWith('/api/auth/2fa')) return true;
+  if (pathOnly === '/api/websocket/normal' || pathOnly === '/api/websocket/normal/') return true;
+  if (pathOnly === '/api/websocket/tor' || pathOnly === '/api/websocket/tor/') return true;
   if (pathOnly === '/' || pathOnly === '/index.html') return true;
   if (pathOnly.startsWith('/assets/')) return true;
   if (pathOnly.startsWith('/vendor/')) return true;

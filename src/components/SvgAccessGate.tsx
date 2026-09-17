@@ -17,6 +17,7 @@ function asset(path: string) {
 export default function SvgAccessGate({ children }: { children: React.ReactNode }) {
   const origin = getSiteOrigin();
   const [ready, setReady] = useState(!isSvgShell());
+  const [needsCaptcha, setNeedsCaptcha] = useState(false);
   const [solved, setSolved] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -30,20 +31,27 @@ export default function SvgAccessGate({ children }: { children: React.ReactNode 
     if (!isSvgShell()) return;
     let gone = false;
     (async () => {
+      let captchaNeeded = false;
       try {
         const r = await fetch("/api/legal/status", { credentials: "include" });
         const d = await r.json();
         if (gone) return;
         setLegalVersion(d.version || null);
-        if (d.gate && d.accepted) {
+        captchaNeeded = !!d.needsCaptcha;
+        setNeedsCaptcha(captchaNeeded);
+        if (d.accepted && !captchaNeeded) {
           setReady(true);
           return;
         }
-        if (d.gate) {
+        if (d.gate || !captchaNeeded) {
           setSolved(true);
-          setStatus("Verified. Accept the policies to continue.");
+          if (!d.accepted) setStatus("Accept the policies to continue.");
         }
       } catch {}
+      if (!captchaNeeded) {
+        if (!gone) setCapReady(false);
+        return;
+      }
       (window as any).CAP_CUSTOM_WASM_URL = asset("vendor/cap/cap_wasm_bg.wasm");
       (window as any).CAP_PAKO_URL = asset("vendor/cap/pako_inflate.min.js");
       try {
@@ -67,7 +75,7 @@ export default function SvgAccessGate({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     const el = capRef.current;
-    if (!el) return;
+    if (!el || !needsCaptcha) return;
     const onSolve = () => {
       setSolved(true);
       setStatusKind("ok");
@@ -84,12 +92,13 @@ export default function SvgAccessGate({ children }: { children: React.ReactNode 
       el.removeEventListener("solve", onSolve);
       el.removeEventListener("error", onErr);
     };
-  }, [capReady, agreed]);
+  }, [capReady, agreed, needsCaptcha]);
 
   if (ready) return <>{children}</>;
 
   async function continueOn() {
-    if (busy || !solved || !agreed) return;
+    if (busy || !agreed) return;
+    if (needsCaptcha && !solved) return;
     setBusy(true);
     setStatusKind("");
     setStatus("Saving agreement…");
@@ -116,7 +125,7 @@ export default function SvgAccessGate({ children }: { children: React.ReactNode 
   }
 
   const href = (p: string) => origin + p;
-  const canGo = !busy && solved && agreed;
+  const canGo = !busy && agreed && (!needsCaptcha || solved);
 
   return (
     <div className="pz-svg-gate">
@@ -306,22 +315,28 @@ export default function SvgAccessGate({ children }: { children: React.ReactNode 
           </svg>
         </div>
         <p className="eyebrow">AndiHub</p>
-        <h1>Verify to continue</h1>
-        <p className="sub">A quick check keeps the community safe. Agree to our policies, then continue.</p>
-        <div className="widget-wrap">
-          {capReady ? (
-            <cap-widget
-              ref={capRef as any}
-              data-cap-api-endpoint={`${origin}/cap/`}
-              data-cap-i18n-initial-state="I'm not a robot"
-              data-cap-i18n-verifying-label="Verifying…"
-              data-cap-i18n-solved-label="Verified"
-              data-cap-i18n-error-label="Try again"
-            />
-          ) : (
-            <p className="cap-fallback">Loading verification…</p>
-          )}
-        </div>
+        <h1>{needsCaptcha ? "Verify to continue" : "Agree to continue"}</h1>
+        <p className="sub">
+          {needsCaptcha
+            ? "A quick check keeps the community safe. Agree to our policies, then continue."
+            : "Review and accept our policies to continue."}
+        </p>
+        {needsCaptcha ? (
+          <div className="widget-wrap">
+            {capReady ? (
+              <cap-widget
+                ref={capRef as any}
+                data-cap-api-endpoint={`${origin}/cap/`}
+                data-cap-i18n-initial-state="I'm not a robot"
+                data-cap-i18n-verifying-label="Verifying…"
+                data-cap-i18n-solved-label="Verified"
+                data-cap-i18n-error-label="Try again"
+              />
+            ) : (
+              <p className="cap-fallback">Loading verification…</p>
+            )}
+          </div>
+        ) : null}
         <label className="agree">
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
           <span className="tick" aria-hidden="true">

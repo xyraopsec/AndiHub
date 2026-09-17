@@ -131,7 +131,7 @@ export default function InspectOverlay({
     setTab("source");
     if (!allowed) {
       setSource("");
-      setNote("You can only inspect proxy pages or games.");
+      setNote("You can only inspect open pages.");
       return;
     }
     const got = readFrameSource();

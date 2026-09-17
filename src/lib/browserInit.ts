@@ -64,12 +64,6 @@ export function armProxySession() {
 
 async function waitForProxyArm(timeoutMs = 120000): Promise<void> {
   if (proxyArmed) return;
-  try {
-    if (navigator.serviceWorker?.controller) {
-      markProxyArmed();
-      return;
-    }
-  } catch {}
   await new Promise<void>((resolve, reject) => {
     if (proxyArmed) {
       resolve();

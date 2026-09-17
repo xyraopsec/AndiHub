@@ -11,6 +11,12 @@ import { generateGameId } from "@/lib/gameId";
 import { hrefs, marks } from "@/lib/uiMarks";
 import { isLiteDevice } from "@/lib/liteDevice";
 import ObfuscatedText from "./ObfuscatedText";
+import {
+  trackCatalogFilter,
+  trackCatalogSearch,
+  trackLibraryOpen,
+  trackModuleOpen,
+} from "@/lib/lessonMetrics";
 
 const CATEGORIES = ["All", "Action", "Racing", "Strategy", "Sports", "Skill", "Shooting", "2 Player", "Io"];
 const PINNED_LABELS = [marks.request(), "Minecraft", "Roblox"];
@@ -697,6 +703,24 @@ export default function GamesPage({ onNavigate, adminEdit = false, initialQuery 
   );
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const isAdminMode = adminEdit && adminOk;
+  const searchTrackRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    trackLibraryOpen();
+  }, []);
+
+  useEffect(() => {
+    if (activeCategory && activeCategory !== "All") trackCatalogFilter(activeCategory);
+  }, [activeCategory]);
+
+  useEffect(() => {
+    if (searchTrackRef.current) clearTimeout(searchTrackRef.current);
+    if (!search.trim()) return;
+    searchTrackRef.current = setTimeout(() => trackCatalogSearch(search), 700);
+    return () => {
+      if (searchTrackRef.current) clearTimeout(searchTrackRef.current);
+    };
+  }, [search]);
 
   useEffect(() => {
     if (!adminEdit) {
@@ -826,6 +850,12 @@ export default function GamesPage({ onNavigate, adminEdit = false, initialQuery 
   const handlePlay = useCallback((game: Game) => {
     armAdAudio();
     recordPlay(game);
+    trackModuleOpen({
+      id: game.id,
+      label: game.label,
+      topic: game.categories?.[0] || "general",
+      via: game.via || "standard",
+    });
     pushRecentGame(game.id);
     setPlayCounts((prev) => ({ ...prev, [game.id]: (prev[game.id] || 0) + 1 }));
     if (onNavigate) {

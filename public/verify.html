@@ -77,36 +77,23 @@
   </script>
   <script>
     !(function (e, t, a, n) {
-      function boot() {
-        ((e[n] = e[n] || []),
-          e[n].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }));
-        var g = t.getElementsByTagName(a)[0],
-          m = t.createElement(a);
-        ((m.async = !0),
-          (m.src = "https://www.googletagmanager.com/gtm.js?id=GTM-WPH7NCG4"),
-          g.parentNode.insertBefore(m, g));
-      }
-      if ("requestIdleCallback" in e) e.requestIdleCallback(boot, { timeout: 6000 });
-      else e.setTimeout(boot, 2500);
+      ((e[n] = e[n] || []),
+        e[n].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }));
+      var g = t.getElementsByTagName(a)[0],
+        m = t.createElement(a);
+      ((m.async = !0),
+        (m.src = "https://www.googletagmanager.com/gtm.js?id=GTM-WPH7NCG4"),
+        g.parentNode.insertBefore(m, g));
     })(window, document, "script", "dataLayer");
   </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHE360M0YP"></script>
   <script>
-    (function () {
-      function boot() {
-        var s = document.createElement("script");
-        s.async = true;
-        s.src = "https://www.googletagmanager.com/gtag/js?id=G-SHE360M0YP";
-        document.head.appendChild(s);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () {
-          dataLayer.push(arguments);
-        };
-        gtag("js", new Date());
-        gtag("config", "G-SHE360M0YP");
-      }
-      if ("requestIdleCallback" in window) requestIdleCallback(boot, { timeout: 7000 });
-      else setTimeout(boot, 3000);
-    })();
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () {
+      dataLayer.push(arguments);
+    };
+    gtag("js", new Date());
+    gtag("config", "G-SHE360M0YP", { send_page_view: true, transport_type: "beacon" });
   </script>
   <title>HypeStudy</title>
   <meta name="description" content="Create flashcards, take quizzes, track your progress with advanced analytics, and master any subject with confidence." />

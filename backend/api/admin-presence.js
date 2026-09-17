@@ -4,6 +4,14 @@ import { isOwnerEmail } from '../utils/auth-roles.js';
 import { reportGamePresence, clearGamePresence, sanitizeGameId } from './game-stats.js';
 import { trackProxyHosts } from './achievements.js';
 import { bumpProxySession } from '../utils/usage-daily.js';
+import { toIPv4 } from '../middleware/security.js';
+import {
+  createMentionNotifications,
+  parseTargetIps,
+  serializeTargetIps,
+  parseStoredTargetIps,
+  ipInTargetList,
+} from '../utils/mentions.js';
 
 const STALE_MS = 30000;
 const MAX_CLIENTS = 4000;
@@ -164,37 +172,67 @@ export function listAnnouncementsHandler(req, res) {
   const rows = db
     .prepare(
       `SELECT a.id, a.title, a.content, a.active, a.created_by, a.created_at, a.updated_at,
-              a.target_user_id, u.username as target_username
+              a.target_user_id, a.target_ips, u.username as target_username
        FROM announcements a
        LEFT JOIN users u ON u.id = a.target_user_id
        ORDER BY a.created_at DESC LIMIT 50`
     )
     .all();
-  res.json({ announcements: rows });
+  res.json({
+    announcements: rows.map((r) => ({
+      ...r,
+      target_ips: parseStoredTargetIps(r.target_ips),
+    })),
+  });
 }
 
 export function getActiveAnnouncementHandler(req, res) {
   const uid = req.session?.user?.id || null;
-  let row = null;
+  const ip = toIPv4(null, req);
+  const byId = new Map();
+
   if (uid) {
-    row = db
+    const targeted = db
       .prepare(
-        `SELECT id, title, content, created_at, target_user_id FROM announcements
+        `SELECT id, title, content, created_at, target_user_id, target_ips FROM announcements
          WHERE active = 1 AND target_user_id = ?
-         ORDER BY created_at DESC LIMIT 1`
+         ORDER BY created_at DESC LIMIT 8`
       )
-      .get(uid);
+      .all(uid);
+    for (const row of targeted) byId.set(row.id, row);
   }
-  if (!row) {
-    row = db
-      .prepare(
-        `SELECT id, title, content, created_at, target_user_id FROM announcements
-         WHERE active = 1 AND (target_user_id IS NULL OR target_user_id = '')
-         ORDER BY created_at DESC LIMIT 1`
-      )
-      .get();
+
+  const ipCandidates = db
+    .prepare(
+      `SELECT id, title, content, created_at, target_user_id, target_ips FROM announcements
+       WHERE active = 1 AND target_ips IS NOT NULL AND target_ips != ''
+       ORDER BY created_at DESC LIMIT 40`
+    )
+    .all();
+  for (const row of ipCandidates) {
+    if (ipInTargetList(ip, row.target_ips)) byId.set(row.id, row);
   }
-  res.json({ announcement: row || null });
+
+  const globals = db
+    .prepare(
+      `SELECT id, title, content, created_at, target_user_id, target_ips FROM announcements
+       WHERE active = 1
+         AND (target_user_id IS NULL OR target_user_id = '')
+         AND (target_ips IS NULL OR target_ips = '')
+       ORDER BY created_at DESC LIMIT 8`
+    )
+    .all();
+  for (const row of globals) byId.set(row.id, row);
+
+  const announcements = [...byId.values()]
+    .sort((a, b) => (b.created_at || 0) - (a.created_at || 0))
+    .slice(0, 12)
+    .map(({ target_ips, ...rest }) => rest);
+
+  res.json({
+    announcements,
+    announcement: announcements[0] || null,
+  });
 }
 
 export function createAnnouncementHandler(req, res) {
@@ -222,12 +260,24 @@ export function createAnnouncementHandler(req, res) {
     targetUserId = found.id;
   }
 
+  const targetIps = parseTargetIps(req.body?.targetIps ?? req.body?.target_ips ?? '');
+  const targetIpsJson = serializeTargetIps(targetIps);
+
   const id = randomUUID();
   const now = Date.now();
   db.prepare(
-    `INSERT INTO announcements (id, title, content, active, created_by, created_at, updated_at, target_user_id)
-     VALUES (?, ?, ?, 1, ?, ?, ?, ?)`
-  ).run(id, title, content, req.session.user.id, now, now, targetUserId);
+    `INSERT INTO announcements (id, title, content, active, created_by, created_at, updated_at, target_user_id, target_ips)
+     VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?)`
+  ).run(id, title, content, req.session.user.id, now, now, targetUserId, targetIpsJson);
+
+  createMentionNotifications({
+    actorId: req.session.user.id,
+    title,
+    text: content,
+    refType: 'announcement',
+    refId: id,
+    preview: content,
+  });
 
   const row = db
     .prepare(
@@ -236,7 +286,12 @@ export function createAnnouncementHandler(req, res) {
        WHERE a.id = ?`
     )
     .get(id);
-  res.status(201).json({ announcement: row });
+  res.status(201).json({
+    announcement: {
+      ...row,
+      target_ips: parseStoredTargetIps(row.target_ips),
+    },
+  });
 }
 
 export function setAnnouncementActiveHandler(req, res) {

@@ -7,8 +7,9 @@ import {
   UserCog, Users, Ban, UserMinus, ShieldCheck, ShieldOff, Plus, ExternalLink, Image,
   Music2, MapPin, Link2, Heart, Globe2, Radio, Monitor, BarChart3, Copy, Trophy, Gamepad2, Pencil,
   LayoutDashboard, Cpu, Database, Activity, Power, ShieldAlert, Server, Network, Info, X as XIcon, Keyboard,
-  TrendingUp,
+  TrendingUp, Bell,
 } from "lucide-react";
+import { MentionsText } from "@/lib/mentions";
 import { BadgeChip, BadgeRow, type BadgeInfo } from "./BadgeChip";
 import {
   reconcileSettings,
@@ -58,7 +59,7 @@ const SITE_PRESETS = [
   { id: "petezah",   label: "AndiHub",           favicon: "/logo.png" },
 ];
 
-type Section = "profile" | "proxy" | "get-links" | "achievements" | "appearance" | "cloaking" | "behavior" | "shortcuts" | "data" | "admin" | "users" | "live" | "firefox-vm" | "game-stats" | "link-stats" | "ad-reports" | "monitoring" | "updates" | "ai-prompts";
+type Section = "profile" | "proxy" | "get-links" | "achievements" | "appearance" | "cloaking" | "behavior" | "shortcuts" | "data" | "mentions" | "admin" | "users" | "live" | "firefox-vm" | "game-stats" | "link-stats" | "ad-reports" | "monitoring" | "updates" | "ai-prompts";
 
 function applySettingsNow(s: Record<string, string>) {
   if (s.theme) {
@@ -361,6 +362,7 @@ const NAV: { id: Section; label: string; icon: any; adminOnly?: boolean }[] = [
   { id: "behavior",   label: "Behavior",    icon: Sliders },
   { id: "shortcuts",  label: "Shortcuts",   icon: Keyboard },
   { id: "data",       label: "Data",        icon: Download },
+  { id: "mentions",   label: "Mentions",    icon: Bell },
   { id: "admin",      label: "Admin",       icon: LayoutDashboard, adminOnly: true },
   { id: "users",      label: "Users",       icon: UserCog, adminOnly: true },
   { id: "live",       label: "Live Sites",  icon: Radio, adminOnly: true },
@@ -524,8 +526,11 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
   const [ffHistory, setFfHistory] = useState<{ sessionId: string; userId: string; username?: string | null; startedAt: number; lastSeen: number; endedAt?: number | null; active?: boolean }[]>([]);
   const [ffHistoryTotal, setFfHistoryTotal] = useState(0);
   const [ffHistoryLoading, setFfHistoryLoading] = useState(false);
-  const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string; active: number; created_at: number; target_user_id?: string | null; target_username?: string | null }[]>([]);
+  const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string; active: number; created_at: number; target_user_id?: string | null; target_username?: string | null; target_ips?: string[] }[]>([]);
   const [aiPrompts, setAiPrompts] = useState<{ id: string; preview: string; createdAt: number }[]>([]);
+  const [mentions, setMentions] = useState<{ id: string; kind: string; refType: string; refId: string; body: string; createdAt: number; read: boolean; actorUsername: string | null }[]>([]);
+  const [mentionsUnread, setMentionsUnread] = useState(0);
+  const [mentionsLoading, setMentionsLoading] = useState(false);
   const [routeMetrics, setRouteMetrics] = useState<{
     routes: { route: string; count: number; totalMs: number; avgMs: number }[];
     cpuPercent?: number;
@@ -537,6 +542,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
   const [annTitle, setAnnTitle] = useState("");
   const [annContent, setAnnContent] = useState("");
   const [annTarget, setAnnTarget] = useState("");
+  const [annIps, setAnnIps] = useState("");
   const [annBusy, setAnnBusy] = useState(false);
   const [annMsg, setAnnMsg] = useState("");
   const [badgeCatalog, setBadgeCatalog] = useState<BadgeInfo[]>([]);
@@ -1072,6 +1078,44 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
       .catch(() => setAiPrompts([]));
   }, [section, user]);
 
+  useEffect(() => {
+    if (section !== "mentions" || !user) return;
+    let gone = false;
+    setMentionsLoading(true);
+    fetch("/api/notifications", { credentials: "include" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (gone) return;
+        setMentions(d.notifications || []);
+        setMentionsUnread(Number(d.unread) || 0);
+      })
+      .catch(() => {
+        if (!gone) {
+          setMentions([]);
+          setMentionsUnread(0);
+        }
+      })
+      .finally(() => {
+        if (!gone) setMentionsLoading(false);
+      });
+    return () => {
+      gone = true;
+    };
+  }, [section, user]);
+
+  async function markMentionsRead() {
+    try {
+      await fetch("/api/notifications/read", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      setMentions((prev) => prev.map((n) => ({ ...n, read: true })));
+      setMentionsUnread(0);
+    } catch {}
+  }
+
   async function createAnnouncement() {
     if (!annTitle.trim() || !annContent.trim()) return;
     setAnnBusy(true);
@@ -1085,6 +1129,7 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
           title: annTitle.trim(),
           content: annContent.trim(),
           targetUsername: annTarget.trim() || undefined,
+          targetIps: annIps.trim() || undefined,
         }),
       });
       const d = await r.json();
@@ -1096,7 +1141,15 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
       setAnnTitle("");
       setAnnContent("");
       setAnnTarget("");
-      setAnnMsg(d.announcement?.target_user_id ? "Sent to user" : "Posted globally");
+      setAnnIps("");
+      const ips = d.announcement?.target_ips;
+      setAnnMsg(
+        d.announcement?.target_user_id
+          ? "Sent to user"
+          : Array.isArray(ips) && ips.length
+            ? `Sent to ${ips.length} IP${ips.length === 1 ? "" : "s"}`
+            : "Posted globally",
+      );
     } finally {
       setAnnBusy(false);
       setTimeout(() => setAnnMsg(""), 2500);
@@ -2934,6 +2987,90 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
 
             {section === "shortcuts" && <ShortcutsSettings C={C} />}
 
+            {section === "mentions" && (
+              <div style={{ maxWidth: "560px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                  <div style={{ flex: 1 }}>
+                    <h2 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: "0 0 3px" }}>Mentions</h2>
+                    <p style={{ fontSize: 11, color: C.textSub, margin: 0 }}>
+                      When someone @mentions you in updates, changelogs, or comments.
+                      {mentionsUnread ? ` · ${mentionsUnread} unread` : ""}
+                    </p>
+                  </div>
+                  {mentionsUnread > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => void markMentionsRead()}
+                      style={{
+                        padding: "7px 10px",
+                        borderRadius: 8,
+                        border: `1px solid ${C.border}`,
+                        background: C.surface,
+                        color: C.textSub,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Mark all read
+                    </button>
+                  ) : null}
+                </div>
+                {mentionsLoading ? (
+                  <p style={{ fontSize: 12, color: C.textMuted }}>Loading…</p>
+                ) : mentions.length === 0 ? (
+                  <p style={{ fontSize: 12, color: C.textMuted }}>No mentions yet. Try @username in a post.</p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {mentions.map((n) => (
+                      <button
+                        key={n.id}
+                        type="button"
+                        onClick={() => {
+                          if (n.refType === "changelog") onNavigate("petezah://changelog");
+                          else if (n.refType === "feedback" || n.refType === "comment") onNavigate("petezah://feedback");
+                          else if (n.actorUsername) onNavigate(`petezah://user/@${n.actorUsername}`);
+                          void markMentionsRead();
+                        }}
+                        style={{
+                          textAlign: "left",
+                          padding: "12px 14px",
+                          borderRadius: 10,
+                          background: n.read ? C.surface : C.accentDim,
+                          border: `1px solid ${n.read ? C.border : C.borderFocus}`,
+                          cursor: "pointer",
+                          fontFamily: "inherit",
+                        }}
+                      >
+                        <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 4 }}>
+                          <span style={{ fontSize: 12, fontWeight: 650, color: C.accent }}>
+                            @{n.actorUsername || "someone"}
+                          </span>
+                          <span style={{ fontSize: 10, color: C.textMuted }}>mentioned you</span>
+                          {!n.read ? (
+                            <span
+                              style={{
+                                marginLeft: "auto",
+                                width: 7,
+                                height: 7,
+                                borderRadius: 99,
+                                background: C.accent,
+                              }}
+                            />
+                          ) : null}
+                        </div>
+                        <MentionsText
+                          text={n.body || ""}
+                          onNavigate={onNavigate}
+                          style={{ fontSize: 11, color: C.textSub, display: "block" }}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {section === "data" && (
               <div style={{ maxWidth: "400px" }}>
                 <h2 style={{ fontSize: "15px", fontWeight: 700, color: C.text, margin: "0 0 3px" }}>Data</h2>
@@ -4258,18 +4395,33 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
               <div style={{ maxWidth: "560px" }}>
                 <h2 style={{ fontSize: 15, fontWeight: 700, color: C.text, margin: "0 0 3px" }}>Updates</h2>
                 <p style={{ fontSize: 11, color: C.textSub, margin: "0 0 16px" }}>
-                  Post a global popup, or send one straight to a specific user. Suspend anytime.
+                  Global popup, specific user, or school IP(s). Each browser dismisses in localStorage — shared IPs still reach everyone. Use @username in the message to mention.
                 </p>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 18 }}>
                   <Field label="Title" value={annTitle} onChange={(e: any) => setAnnTitle(e.target.value)} placeholder="What's new" maxLength={120} icon={Megaphone} />
-                  <Field label="Target user (optional)" value={annTarget} onChange={(e: any) => setAnnTarget(e.target.value)} placeholder="Leave blank for everyone · @username or email" maxLength={64} icon={User} />
+                  <Field label="Target user (optional)" value={annTarget} onChange={(e: any) => setAnnTarget(e.target.value)} placeholder="Leave blank · @username or email" maxLength={64} icon={User} />
+                  <div>
+                    <label style={{ display: "block", fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6, color: C.textMuted }}>Target IPs (optional)</label>
+                    <textarea
+                      value={annIps}
+                      onChange={(e) => setAnnIps(e.target.value)}
+                      placeholder={"One or more IPs, comma or line separated\nExample: 1.2.3.4, 5.6.7.8"}
+                      maxLength={800}
+                      rows={2}
+                      style={{
+                        width: "100%", background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8,
+                        color: C.text, fontSize: 12, padding: "9px 12px", outline: "none", resize: "vertical",
+                        fontFamily: "inherit", boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
                   <div>
                     <label style={{ display: "block", fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6, color: C.textMuted }}>Message</label>
                     <textarea
                       value={annContent}
                       onChange={(e) => setAnnContent(e.target.value)}
-                      placeholder="Update content…"
+                      placeholder="Update content… @username to mention"
                       maxLength={4000}
                       rows={4}
                       style={{
@@ -4286,7 +4438,11 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                       fontSize: 12, fontWeight: 600, cursor: "pointer", opacity: annBusy ? 0.6 : 1,
                     }}>
                       {annBusy ? <Loader2 size={11} className="animate-spin" /> : <Check size={11} />}
-                      {annTarget.trim() ? "Send to user" : "Publish globally"}
+                      {annTarget.trim()
+                        ? "Send to user"
+                        : annIps.trim()
+                          ? "Send to IPs"
+                          : "Publish globally"}
                     </button>
                     {annMsg && <span style={{ fontSize: 11, color: C.success }}>{annMsg}</span>}
                   </div>
@@ -4308,10 +4464,22 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                           <span style={{ flex: 1, fontSize: 12, fontWeight: 650, color: C.text }}>{a.title}</span>
                           <span style={{
                             fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 5,
-                            background: a.target_user_id ? "hsl(280 50% 45% / 0.18)" : "hsl(210 50% 45% / 0.18)",
-                            color: a.target_user_id ? "hsl(280 70% 75%)" : C.accent,
+                            background: a.target_user_id
+                              ? "hsl(280 50% 45% / 0.18)"
+                              : Array.isArray(a.target_ips) && a.target_ips.length
+                                ? "hsl(32 60% 40% / 0.2)"
+                                : "hsl(210 50% 45% / 0.18)",
+                            color: a.target_user_id
+                              ? "hsl(280 70% 75%)"
+                              : Array.isArray(a.target_ips) && a.target_ips.length
+                                ? "hsl(32 80% 70%)"
+                                : C.accent,
                           }}>
-                            {a.target_user_id ? `@${a.target_username || "user"}` : "Global"}
+                            {a.target_user_id
+                              ? `@${a.target_username || "user"}`
+                              : Array.isArray(a.target_ips) && a.target_ips.length
+                                ? `${a.target_ips.length} IP${a.target_ips.length === 1 ? "" : "s"}`
+                                : "Global"}
                           </span>
                           <span style={{
                             fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 5,
@@ -4430,8 +4598,10 @@ export default function AccountPage({ onNavigate }: { onNavigate: (url: string) 
                     ["Mercury Workshop", "Page rewrite engine"],
                     ["Waves Proxy / Mochi", "Proxy transport & networking"],
                     ["Puter", "Firefox WASM virtual machine"],
-                    ["Selenite", "Large games catalog contributions"],
-                    ["CrazyGames & partners", "Embedded / catalog game providers"],
+                    ["Selenite", "HTML5 catalog contributions (third-party / community)"],
+                    ["CrazyGames & partners", "Embedded catalog providers"],
+                    ["SoundCloud / YouTube", "Official music embed & API surfaces"],
+                    ["TMDB", "Movie/TV metadata (not video hosting)"],
                     ["Lucide", "Icon system"],
                     ["Vanta / Three.js", "Atmospheric backgrounds"],
                   ].map(([title, desc]) => (

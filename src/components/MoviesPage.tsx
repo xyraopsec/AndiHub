@@ -946,8 +946,19 @@ function MoviePlayer({
                     }}
                   >
                     <Play size={13} fill="currentColor" />
-                    {state.type === "tv" ? `Watch E${episode}` : "Watch now"}
+                    {state.type === "tv" ? `Open E${episode} source` : "Open source"}
                   </button>
+                  <p style={{
+                    margin: "12px 0 0",
+                    fontSize: 10,
+                    lineHeight: 1.45,
+                    color: S.textMuted,
+                    maxWidth: 420,
+                  }}>
+                    Metadata from third-party catalog services. PeteZah does not host audiovisual files.
+                    Playback is requested from separate third-party sources through the browsing layer.
+                    Authorization depends on those sources and your local law — not a PeteZah license.
+                  </p>
                 </div>
               </div>
 
@@ -1302,7 +1313,7 @@ export default function MoviesPage({
                 fontSize: 13, color: S.textSub, margin: "0 0 16px", lineHeight: 1.45,
                 display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
               }}>
-                {featured.overview || "Start watching now."}
+                {featured.overview || "Browse metadata and open a third-party source."}
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <button
@@ -1503,6 +1514,17 @@ export default function MoviesPage({
               </div>
             </>
           )}
+          <p style={{
+            margin: "28px 0 8px",
+            fontSize: 10,
+            lineHeight: 1.45,
+            color: S.textMuted,
+            maxWidth: 560,
+          }}>
+            Film &amp; TV metadata is for discovery. PeteZah does not host or store the underlying audiovisual files.
+            Opening a title requests content from separate third-party sources through the browsing layer.
+            See Terms §6 and the DMCA policy for architecture and complaint handling.
+          </p>
         </div>
       </div>
 

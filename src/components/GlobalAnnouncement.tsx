@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Megaphone } from "lucide-react";
+import { MentionsText } from "@/lib/mentions";
 
-const SEEN_KEY = "pz-announcement-seen";
+const SEEN_KEY = "pz-announcement-seen-ids";
+const LEGACY_SEEN_KEY = "pz-announcement-seen";
 
 interface Announcement {
   id: string;
@@ -11,18 +13,53 @@ interface Announcement {
   created_at?: number;
 }
 
-export default function GlobalAnnouncement() {
-  const [item, setItem] = useState<Announcement | null>(null);
+function readSeen(): Set<string> {
+  const out = new Set<string>();
+  try {
+    const raw = localStorage.getItem(SEEN_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        for (const id of parsed) {
+          if (typeof id === "string" && id) out.add(id);
+        }
+      }
+    }
+    const legacy = localStorage.getItem(LEGACY_SEEN_KEY);
+    if (legacy) out.add(legacy);
+  } catch {}
+  return out;
+}
+
+function writeSeen(ids: Set<string>) {
+  try {
+    const list = [...ids].slice(-80);
+    localStorage.setItem(SEEN_KEY, JSON.stringify(list));
+  } catch {}
+}
+
+export default function GlobalAnnouncement({
+  onNavigate,
+}: {
+  onNavigate?: (url: string) => void;
+}) {
+  const [queue, setQueue] = useState<Announcement[]>([]);
+  const item = queue[0] || null;
 
   useEffect(() => {
     let cancelled = false;
     fetch("/api/announcements/active", { credentials: "include" })
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
-        if (cancelled || !d.announcement) return;
-        const seen = localStorage.getItem(SEEN_KEY);
-        if (seen === d.announcement.id) return;
-        setItem(d.announcement);
+        if (cancelled || !d) return;
+        const list: Announcement[] = Array.isArray(d.announcements)
+          ? d.announcements
+          : d.announcement
+            ? [d.announcement]
+            : [];
+        const seen = readSeen();
+        const pending = list.filter((a) => a?.id && !seen.has(a.id));
+        if (pending.length) setQueue(pending);
       })
       .catch(() => {});
     return () => {
@@ -31,8 +68,11 @@ export default function GlobalAnnouncement() {
   }, []);
 
   const dismiss = () => {
-    if (item) localStorage.setItem(SEEN_KEY, item.id);
-    setItem(null);
+    if (!item) return;
+    const seen = readSeen();
+    seen.add(item.id);
+    writeSeen(seen);
+    setQueue((prev) => prev.slice(1));
   };
 
   return (
@@ -109,17 +149,17 @@ export default function GlobalAnnouncement() {
               </button>
             </div>
             <div style={{ padding: "16px 18px 18px" }}>
-              <p
+              <MentionsText
+                text={item.content}
+                onNavigate={onNavigate}
                 style={{
                   margin: 0,
                   fontSize: 13,
                   lineHeight: 1.55,
                   color: "hsla(0,0%,100%,0.72)",
-                  whiteSpace: "pre-wrap",
+                  display: "block",
                 }}
-              >
-                {item.content}
-              </p>
+              />
               <button
                 onClick={dismiss}
                 style={{

@@ -24,7 +24,8 @@ import {
   unwrapProxyUrl,
   type OpenTabRequest,
 } from "@/lib/openTabBridge";
-import { hrefs } from "@/lib/uiMarks";
+import { hrefs, marks } from "@/lib/uiMarks";
+import { whenQuietEnds } from "@/lib/quietBoot";
 import { setRivetNavigateHandler } from "@/lib/rivet/host";
 
 function getPresenceClientId() {
@@ -123,8 +124,9 @@ export default function ArcBrowser() {
 
   useEffect(() => {
     let iv: number | null = null;
+    let armed = false;
     const report = () => {
-      if (document.hidden) return;
+      if (!armed || document.hidden) return;
       const urls = state.tabs
         .map((t) => t.url)
         .filter((u) => typeof u === "string" && (/^https?:\/\//i.test(u) || /^petezah:\/\//i.test(u)))
@@ -132,7 +134,7 @@ export default function ArcBrowser() {
       const active = state.focusedTab || state.activeTab;
       let game: any = null;
       if (active?.url?.startsWith(hrefs.g())) {
-        game = { surface: "list", label: "Games", gameId: null };
+        game = { surface: "list", label: marks.a(), gameId: null };
       } else if (active?.url?.startsWith(hrefs.gv())) {
         try {
           const q = active.url.includes("?") ? active.url.slice(active.url.indexOf("?") + 1) : "";
@@ -157,7 +159,6 @@ export default function ArcBrowser() {
         credentials: "include",
       }).catch(() => {});
     };
-    report();
     const start = () => {
       if (iv !== null) return;
       iv = window.setInterval(report, presenceIntervalMs());
@@ -175,9 +176,14 @@ export default function ArcBrowser() {
         start();
       }
     };
-    start();
-    document.addEventListener("visibilitychange", onVis);
+    const offQuiet = whenQuietEnds(() => {
+      armed = true;
+      report();
+      start();
+      document.addEventListener("visibilitychange", onVis);
+    });
     return () => {
+      offQuiet();
       stop();
       document.removeEventListener("visibilitychange", onVis);
     };
@@ -218,7 +224,7 @@ export default function ArcBrowser() {
     };
     const onMessage = (e: MessageEvent) => {
       const d = e.data;
-      if (d && d.source === "pz-voltedge-error" && d.action === "navigate" && typeof d.url === "string") {
+      if (d && d.source === "pz-session-bridge" && d.action === "navigate" && typeof d.url === "string") {
         let url = d.url.trim();
         if (/^petezah:\/\/[a-z0-9][a-z0-9+.-]*(?:[/?#][^\s]*)?$/i.test(url)) {
           if (url === "petezah://newtab") url = getHomeUrl();
@@ -431,7 +437,7 @@ export default function ArcBrowser() {
         </main>
       </div>
       <DiscordPopup />
-      <GlobalAnnouncement />
+      <GlobalAnnouncement onNavigate={state.navigateToUrl} />
       <InspectOverlay
         open={inspectOpen}
         onClose={() => setInspectOpen(false)}

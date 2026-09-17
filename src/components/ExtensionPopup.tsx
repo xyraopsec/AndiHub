@@ -159,7 +159,7 @@ function IdlePanel({
         boxSizing: "border-box",
       }}
     >
-      <div style={{ fontSize: 13, fontWeight: 650 }}>uBlock Origin</div>
+      <div style={{ fontSize: 13, fontWeight: 650 }}>Privacy filter</div>
       <p
         style={{
           margin: 0,
@@ -475,7 +475,7 @@ export default function ExtensionPopup({
       <div
         ref={panelRef}
         role="dialog"
-        aria-label="uBlock Origin"
+        aria-label="Privacy filter"
         className={`rivet-toolbar-panel${ready || showIdle || showFail ? "" : " measuring"}`}
         style={{
           position: "fixed",
@@ -503,7 +503,7 @@ export default function ExtensionPopup({
               color: "#222",
             }}
           >
-            <div style={{ fontSize: 13, fontWeight: 650 }}>uBlock Origin</div>
+            <div style={{ fontSize: 13, fontWeight: 650 }}>Privacy filter</div>
             <p
               style={{
                 margin: 0,
@@ -540,7 +540,7 @@ export default function ExtensionPopup({
           <iframe
             key={`ublock-${scopeKey}-${instanceId}`}
             ref={frameRef}
-            title="uBlock Origin"
+            title="Privacy filter"
             className="no-obfuscate"
             data-no-obfuscate="true"
             style={{
